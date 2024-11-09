@@ -1,0 +1,28 @@
+# Игнорируем бинарные файлы
+/bin
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.bin
+
+/mod
+/tmp
+
+/coverage.out
+
+# Файлы конфигурации среды
+.env
+*.env
+
+.git
+.gitignore
+
+.idea
+.vscode
+*.swp
+
+.DS_Store
+Thumbs.db
