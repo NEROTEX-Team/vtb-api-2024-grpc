@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package user;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./pkg/v1/user;user;";
+
+service UserV1 {
+    rpc FetchUserById(FetchUserByIdRequest) returns (FetchUserByIdResponse);
+    rpc FetchListUsers(FetchAllUsersRequest) returns (FetchListUsersResponse);
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+    rpc DeleteUser(DeleteUserByIdRequest) returns (Empty);
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc FetchUserByEmail(FetchUserByEmailRequest) returns (FetchUserByEmailResponse);
+}
+
+message UserInfo {
+    string firstname = 1;
+    string lastname = 2;
+    string email = 3;
+}
+
+message User {
+    string id = 1;
+    UserInfo info = 2;  
+    google.protobuf.Timestamp created_at = 3;
+    google.protobuf.Timestamp updated_at = 4;
+}
+
+message FetchUserByIdRequest {
+    string id = 1;
+}
+
+message FetchUserByIdResponse {
+    User user = 1;
+}
+
+message CreateUserRequest {
+    UserInfo info = 1;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
+
+message FetchAllUsersRequest {
+    int32 limit = 1;
+    int32 offset = 2;
+}
+
+message FetchListUsersResponse {
+    int32 total = 1;
+    repeated User users = 2;
+}
+
+message UpdateUserResponse {
+    User user = 1;
+}
+
+message FetchUserByEmailRequest {
+    string email = 1;
+}
+
+message FetchUserByEmailResponse {
+    User user = 1;
+}
+
+message DeleteUserByIdRequest {
+    string id = 1;
+}
+
+message UpdateUserRequest {
+    string id = 1;
+    UserInfo info = 2;
+}
+
+message Empty {
+
+}
