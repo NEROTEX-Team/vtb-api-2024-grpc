@@ -87,7 +87,7 @@ type User struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ID        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Info      *UserInfo              `protobuf:"bytes,2,opt,name=info,proto3" json:"info,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -125,7 +125,7 @@ func (*User) Descriptor() ([]byte, []int) {
 
 func (x *User) GetId() string {
 	if x != nil {
-		return x.Id
+		return x.ID
 	}
 	return ""
 }
@@ -156,7 +156,7 @@ type FetchUserByIdRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ID string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *FetchUserByIdRequest) Reset() {
@@ -191,7 +191,7 @@ func (*FetchUserByIdRequest) Descriptor() ([]byte, []int) {
 
 func (x *FetchUserByIdRequest) GetId() string {
 	if x != nil {
-		return x.Id
+		return x.ID
 	}
 	return ""
 }
@@ -577,7 +577,7 @@ type DeleteUserByIdRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ID string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *DeleteUserByIdRequest) Reset() {
@@ -612,7 +612,7 @@ func (*DeleteUserByIdRequest) Descriptor() ([]byte, []int) {
 
 func (x *DeleteUserByIdRequest) GetId() string {
 	if x != nil {
-		return x.Id
+		return x.ID
 	}
 	return ""
 }
@@ -622,7 +622,7 @@ type UpdateUserRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ID   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Info *UserInfo `protobuf:"bytes,2,opt,name=info,proto3" json:"info,omitempty"`
 }
 
@@ -658,7 +658,7 @@ func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
 
 func (x *UpdateUserRequest) GetId() string {
 	if x != nil {
-		return x.Id
+		return x.ID
 	}
 	return ""
 }

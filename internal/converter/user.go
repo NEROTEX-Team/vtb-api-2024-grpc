@@ -7,31 +7,31 @@ import (
 )
 
 func ToUserFromService(user *model.User) *desc.User {
-	var updatedAt *timestamppd.Timestamp
+	var updatedAt *timestamppb.Timestamp
 	if user.UpdatedAt != nil {
-		updateAt = timestamppb.New(*user.UpdatedAt)
+		updatedAt = timestamppb.New(*user.UpdatedAt)
 	}
 
 	return &desc.User{
-		Id:        user.UUID,
+		ID:        user.ID,
 		Info:      ToUserInfoFromService(user.Info),
 		CreatedAt: timestamppb.New(user.CreatedAt),
 		UpdatedAt: updatedAt,
 	}
 }
 
-func ToUserInfoFromService(info model.userInfo) *desc.UserInfo {
+func ToUserInfoFromService(info model.UserInfo) *desc.UserInfo {
 	return &desc.UserInfo{
-		FirstName: info.FirstName,
-		LastName:  info.LastName,
+		Firstname: info.FirstName,
+		Lastname:  info.LastName,
 		Email:     info.Email,
 	}
 }
 
 func ToUserInfoFromDesc(info *desc.UserInfo) *model.UserInfo {
 	return &model.UserInfo{
-		FirstName: info.FirstName,
-		LastName:  info.LastName,
+		FirstName: info.Firstname,
+		LastName:  info.Lastname,
 		Email:     info.Email,
 	}
 }

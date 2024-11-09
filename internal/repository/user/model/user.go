@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	Id        string
+	ID        string
 	Info      UserInfo
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime

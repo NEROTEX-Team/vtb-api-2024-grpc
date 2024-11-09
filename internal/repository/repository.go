@@ -7,6 +7,6 @@ import (
 )
 
 type UserRepository interface {
-	Create(ctx context.Context, userID string, info *model.UserInfo) error
+	Create(ctx context.Context, userID string, info *model.UserInfo) (*model.User, error)
 	Get(ctx context.Context, userID string) (*model.User, error)
 }

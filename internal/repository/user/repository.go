@@ -5,9 +5,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/model"
 	def "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository"
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository/user/converter"
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository/user/model"
+	repoModel "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository/user/model"
 )
 
 var _ def.UserRepository = (*repository)(nil)
@@ -23,17 +24,22 @@ func NewRepository() *repository {
 	}
 }
 
-func (r *repository) Create(_ context.Context, userUUID string, info *model.UserInfo) error {
+func (r *repository) Create(_ context.Context, userUUID string, info *model.UserInfo) (*model.User, error) {
 	r.m.Lock()
 	defer r.m.Unlock()
 
 	r.data[userUUID] = &repoModel.User{
-		UUID:      userUUID,
+		ID:        userUUID,
 		Info:      converter.ToUserInfoFromService(info),
 		CreatedAt: time.Now(),
 	}
 
-	return nil
+	return &model.User{
+		ID:        userUUID,
+		Info:      *info,
+		CreatedAt: time.Now(),
+		UpdatedAt: nil,
+	}, nil
 }
 
 func (r *repository) Get(_ context.Context, uuid string) (*model.User, error) {

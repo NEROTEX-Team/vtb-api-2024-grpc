@@ -16,7 +16,7 @@ func (s *service) Create(ctx context.Context, info *model.UserInfo) (*model.User
 		return nil, err
 	}
 
-	user, err = s.userRepository.Create(ctx, userID.String(), info)
+	user, err := s.userRepository.Create(ctx, userID.String(), info)
 	if err != nil {
 		log.Printf("failed to create user: %s", err.Error())
 		return nil, err

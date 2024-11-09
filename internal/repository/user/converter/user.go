@@ -15,7 +15,7 @@ func ToUserFromRepo(user *repoModel.User) *model.User {
 	}
 
 	return &model.User{
-		Id:        user.Id,
+		ID:        user.ID,
 		Info:      ToUserInfoFromRepo(user.Info),
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: updatedAt,
