@@ -12,7 +12,7 @@ const (
 	grpcPortEnvName = "APP_GRPC_PORT"
 )
 
-type GRPCConfig struct {
+type GRPCConfig interface {
 	Address() string
 }
 

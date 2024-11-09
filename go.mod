@@ -1,8 +1,9 @@
-module vtb-api
+module github.com/NEROTEX-Team/vtb-api-2024-grpc
 
 go 1.23
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	google.golang.org/grpc v1.68.0
@@ -10,7 +11,6 @@ require (
 )
 
 require (
-	github.com/google/uuid v1.6.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
