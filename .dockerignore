@@ -10,7 +10,8 @@
 
 /mod
 /tmp
-
+docs/
+api/
 /coverage.out
 
 # Файлы конфигурации среды
