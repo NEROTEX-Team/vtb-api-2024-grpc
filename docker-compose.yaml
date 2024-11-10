@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16
+    restart: on-failure:5
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "$APP_GRPC_PORT:$APP_GRPC_PORT"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - APP_GRPC_HOST=$APP_GRPC_HOST
+      - APP_GRPC_PORT=$APP_GRPC_PORT
+      - APP_TLS_CERT_FILE_PATH=$APP_TLS_CERT_FILE_PATH
+      - APP_TLS_KEY_FILE_PATH=$APP_TLS_KEY_FILE_PATH
+      - APP_TLS_CA_FILE_PATH=$APP_TLS_CA_FILE_PATH
+
+volumes:
+  postgres_data:

@@ -4,3 +4,6 @@ generate_proto:
 
 update_packages:
 	go mod tidy && go mod vendor
+
+build:
+	go build -o server.bin cmd/grpc_server/main.go

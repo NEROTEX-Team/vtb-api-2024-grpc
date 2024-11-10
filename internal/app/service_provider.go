@@ -9,6 +9,7 @@ import (
 	userRepository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository/user"
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/service"
 	userService "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/service/user"
+	"google.golang.org/grpc/credentials"
 )
 
 type serviceProvider struct {
@@ -19,6 +20,8 @@ type serviceProvider struct {
 	userService service.UserService
 
 	userImpl *user.Implementation
+
+	tlsCredentials credentials.TransportCredentials
 }
 
 func newServiceProvider() *serviceProvider {
@@ -62,4 +65,18 @@ func (s *serviceProvider) UserImpl() *user.Implementation {
 	}
 
 	return s.userImpl
+}
+
+func (s *serviceProvider) TLSCredentials() credentials.TransportCredentials {
+	if s.tlsCredentials == nil {
+
+		tlsc, err := config.LoadTLSCredentials()
+		if err != nil {
+			log.Fatalf("failed to get tls credentials: %s", err.Error())
+		}
+
+		s.tlsCredentials = tlsc
+	}
+
+	return s.tlsCredentials
 }
