@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"log"
 
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/api/user"
@@ -9,11 +10,16 @@ import (
 	userRepository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository/user"
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/service"
 	userService "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/service/user"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc/credentials"
 )
 
 type serviceProvider struct {
 	grpcConfig config.GRPCConfig
+
+	DBCreds string
+
+	pool *pgxpool.Pool
 
 	userRepository repository.UserRepository
 
@@ -43,28 +49,30 @@ func (s *serviceProvider) GRPCConfig() config.GRPCConfig {
 
 func (s *serviceProvider) UserRepository() repository.UserRepository {
 	if s.userRepository == nil {
-		s.userRepository = userRepository.NewRepository()
+		s.userRepository = userRepository.NewRepository(s.PGPool())
 	}
 
 	return s.userRepository
 }
 
-func (s *serviceProvider) UserService() service.UserService {
+func (s *serviceProvider) UserService() (service.UserService, error) {
 	if s.userService == nil {
-		s.userService = userService.NewService(
-			s.UserRepository(),
-		)
+		s.userService = userService.NewService(s.UserRepository())
 	}
-
-	return s.userService
+	return s.userService, nil
 }
 
-func (s *serviceProvider) UserImpl() *user.Implementation {
+func (s *serviceProvider) UserImpl() (*user.Implementation, error) {
 	if s.userImpl == nil {
-		s.userImpl = user.NewImplementation(s.UserService())
+		service, err := s.UserService()
+		if err != nil {
+			log.Fatalf("failed to get user service: %s", err.Error())
+			return nil, err
+		}
+		s.userImpl = user.NewImplementation(service)
 	}
 
-	return s.userImpl
+	return s.userImpl, nil
 }
 
 func (s *serviceProvider) TLSCredentials() credentials.TransportCredentials {
@@ -79,4 +87,29 @@ func (s *serviceProvider) TLSCredentials() credentials.TransportCredentials {
 	}
 
 	return s.tlsCredentials
+}
+
+func (s *serviceProvider) DatabaseCredentials() string {
+	if s.DBCreds == "" {
+		creds, err := config.LoadDatabaseCredentials()
+		if err != nil {
+			log.Fatalf("failed to get database credentials: %s", err.Error())
+		}
+
+		s.DBCreds = creds
+	}
+
+	return s.DBCreds
+}
+
+func (s *serviceProvider) PGPool() *pgxpool.Pool {
+	if s.pool == nil {
+		pool, err := pgxpool.New(context.Background(), s.DatabaseCredentials())
+		if err != nil {
+			log.Fatalf("failed to connect to database: %s", err.Error())
+		}
+		s.pool = pool
+	}
+
+	return s.pool
 }

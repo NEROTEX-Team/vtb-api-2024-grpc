@@ -7,8 +7,9 @@ import (
 	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 )
 
-func (i *Implementation) Create(ctx context.Context, req *desc.CreateUserRequest) (*desc.CreateUserResponse, error) {
-	user, err := i.userService.Create(ctx, converter.ToUserInfoFromDesc(req.GetInfo()))
+func (i *Implementation) CreateUser(ctx context.Context, req *desc.CreateUserRequest) (*desc.CreateUserResponse, error) {
+
+	user, err := i.userService.CreateUser(ctx, converter.toCreateUserFromDesc(req.CreateUserRequest()))
 	if err != nil {
 		return nil, err
 	}

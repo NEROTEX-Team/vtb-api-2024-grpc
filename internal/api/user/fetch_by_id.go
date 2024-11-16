@@ -8,7 +8,7 @@ import (
 )
 
 func (i *Implementation) FetchById(ctx context.Context, req *desc.FetchUserByIdRequest) (*desc.FetchUserByIdResponse, error) {
-	user, err := i.userService.Get(ctx, req.GetId())
+	user, err := i.userService.FetchUserById(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}

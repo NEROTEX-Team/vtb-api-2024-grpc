@@ -1,0 +1,28 @@
+@startuml
+
+skinparam direction left to right
+
+actor Client
+
+rectangle "gRPC Client" as grpcClient
+
+node "Golang Microservice" as Microservice {
+    [gRPC Server]
+}
+
+database "PostgreSQL" as DB
+component "Keycloak" as AuthServer
+
+Client --> grpcClient : Запрос
+grpcClient --> Microservice : gRPC запрос
+
+Microservice --> AuthServer : Проверка авторизации
+AuthServer --> Microservice : Результат авторизации
+
+Microservice --> DB : Запрос к базе данных
+DB --> Microservice : Результат запроса
+
+Microservice --> grpcClient : gRPC ответ
+grpcClient --> Client : Ответ
+
+@enduml

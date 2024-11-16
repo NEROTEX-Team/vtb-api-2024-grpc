@@ -65,8 +65,11 @@ func (a *App) initGRPCServer(_ context.Context) error {
 	a.grpcServer = grpc.NewServer(grpc.Creds(a.serviceProvider.TLSCredentials()))
 
 	reflection.Register(a.grpcServer)
-
-	desc.RegisterUserV1Server(a.grpcServer, a.serviceProvider.UserImpl())
+	userImpl, err := a.serviceProvider.UserImpl()
+	if err != nil {
+		return err
+	}
+	desc.RegisterUserV1Server(a.grpcServer, userImpl)
 
 	return nil
 }
