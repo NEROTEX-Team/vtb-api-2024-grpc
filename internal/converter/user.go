@@ -6,8 +6,8 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ToCreateUserFromDesc(user *desc.CreateUserRequest) *model.User {
-	return &model.User{
+func ToCreateUserFromDesc(user *desc.CreateUserRequest) *model.CreateUser {
+	return &model.CreateUser{
 		Email:     user.Email,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
