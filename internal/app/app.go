@@ -7,6 +7,7 @@ import (
 
 	"google.golang.org/grpc"
 
+	"internal/antivirus"
 	"internal/config"
 )
 
@@ -15,8 +16,10 @@ type App struct {
 	grpcServer      *grpc.Server
 }
 
-func NewApp(ctx context.Context) (*App, error) {
+func NewApp(ctx context.Context, scanner *antivirus.Scanner) (*App, error) {
 	a := &App{}
+
+	interceptors := scanner.UnaryServerInterceptor("File")
 
 	err := a.initDeps(ctx)
 	if err != nil {
