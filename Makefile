@@ -5,8 +5,11 @@ generate-proto:
 update-packages:
 	go mod tidy && go mod vendor
 
-build:
+build-local:
 	go build -o server.bin cmd/grpc_server/main.go
+
+docker-build:
+	docker build . -t vtb-api-2024-grpc
 
 local:
 	docker compose -f docker-compose.dev.yaml up --force-recreate --renew-anon-volumes --build
