@@ -6,7 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [Architecture](#architecture)
   - [Project Structure](#project-structure)
-  - [Teting](#teting)
+  - [Testing](#testing)
   - [Docker Image](#docker-image)
   - [Implementation](#implementation)
 
@@ -38,7 +38,7 @@
 └── vendor               # folder for external dependencies
 ```
 
-## Teting
+## Testing
 
 Before start autotests, you should run `make local`. This command starts
 clear database container for autotesting.
@@ -49,8 +49,11 @@ After autotests you can use `make local-down` to stop container.
 
 ## Docker Image
 
-You can download Docker Image from [Docker Hub](https://hub.docker.com).
+You can download Docker Image from [Docker Hub](https://hub.docker.com/r/andytakker/vtb-api-2024-grpc).
 
 To build new image locally use `make docker-build`.
+
+A new image is built every time a new commit gets into master via
+[Github Actions](https://github.com/NEROTEX-Team/vtb-api-2024-grpc/blob/master/.github/workflows/ci.yaml).
 
 ## Implementation
