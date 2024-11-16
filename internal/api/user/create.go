@@ -9,7 +9,7 @@ import (
 
 func (i *Implementation) CreateUser(ctx context.Context, req *desc.CreateUserRequest) (*desc.CreateUserResponse, error) {
 
-	user, err := i.userService.CreateUser(ctx, converter.toCreateUserFromDesc(req.CreateUserRequest()))
+	user, err := i.userService.CreateUser(ctx, converter.ToCreateUserFromDesc(req.CreateUserRequest()))
 	if err != nil {
 		return nil, err
 	}
