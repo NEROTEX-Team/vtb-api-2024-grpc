@@ -1,15 +1,21 @@
+import os
 from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from datetime import datetime
+
 import grpc
 from app import user_pb2, user_pb2_grpc
-from datetime import datetime
+
+GRPC_SERVER_HOST = os.environ.get('GRPC_SERVER_HOST', 'localhost')
+GRPC_SERVER_PORT = os.environ.get('GRPC_SERVER_PORT', '50051')
 
 router = APIRouter()
 
+grpc_server_address = f"{GRPC_SERVER_HOST}:{GRPC_SERVER_PORT}"
 templates = Jinja2Templates(directory="app/templates")
 
-channel = grpc.insecure_channel('localhost:50051') 
+channel = grpc.insecure_channel(grpc_server_address)
 stub = user_pb2_grpc.UserV1Stub(channel)
 
 def timestamp_to_datetime(ts):

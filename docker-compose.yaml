@@ -30,13 +30,19 @@ services:
       - APP_TLS_KEY_FILE_PATH=$APP_TLS_KEY_FILE_PATH
       - APP_TLS_CA_FILE_PATH=$APP_TLS_CA_FILE_PATH
 
-  grpc_client: 
+  grpc_client:
     image: andytakker/vtb-api-2024-grpc-client:latest
     ports:
-      - "$APP_CLIENT_PORT:$APP_CLIENT_PORT"
+      - "${APP_CLIENT_PORT:-8000}:${APP_CLIENT_PORT:-8000}"
     depends_on:
-      - grpc_server
+      grpc_server:
+        condition: service_started
     environment:
-      - APP_CLIENT_PORT=$APP_CLIENT_PORT
+      - APP_CLIENT_PORT=${APP_CLIENT_PORT:-8000}
+      - GRPC_SERVER_HOST=grpc_server
+      - GRPC_SERVER_PORT=${APP_GRPC_PORT:-50051}
+    networks:
+      - app-network
+      
 volumes:
   postgres_data:

@@ -1,4 +1,4 @@
-PROTO_DIR=api\v1\user
+PROTO_DIR=app
 PROTO_FILE=user.proto
 PYTHON_DIR=app
 GRPC_TOOLS=python -m grpc_tools.protoc
@@ -15,6 +15,7 @@ help:
 .PHONY: proto
 proto:
 	$(GRPC_TOOLS) -I$(PROTO_DIR) --python_out=$(PYTHON_DIR) --grpc_python_out=$(PYTHON_DIR) $(PROTO_DIR)/$(PROTO_FILE)
+	sed -i 's/^import user_pb2 as/from . import user_pb2 as/' $(PYTHON_DIR)/user_pb2_grpc.py
 
 .PHONY: run
 run:
