@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Create New User</h2>
+<form method="post">
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br><br>
+    <label>First Name:</label><br>
+    <input type="text" name="first_name" required><br><br>
+    <label>Last Name:</label><br>
+    <input type="text" name="last_name" required><br><br>
+    <button type="submit">Create User</button>
+</form>
+<br>
+<a href="{{ url_for('users:read_users') }}">Back to Users List</a>
+{% endblock %}

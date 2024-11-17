@@ -1,16 +1,33 @@
-FROM python:3.12-slim
+
+ARG PYTHON_VERSION=3.12
+
+FROM python:${PYTHON_VERSION}-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    appuser
 
-RUN pip install --no-cache-dir poetry
+RUN pip install -U pip poetry && poetry config virtualenvs.create false
 
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --no-ansi
+RUN --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=poetry.lock,target=poetry.lock \
+    poetry install --no-interaction --no-ansi --no-dev
 
-COPY . .
+USER appuser
 
-EXPOSE 8000
+ARG PROJECT_NAME=client
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+COPY ./${PROJECT_NAME} ./${PROJECT_NAME}
+
+EXPOSE 8080

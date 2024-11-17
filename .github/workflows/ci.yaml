@@ -119,3 +119,11 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/vtb-api-2024-grpc-server:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/vtb-api-2024-grpc-server:${{ steps.vars.outputs.sha_short }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./client
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/vtb-api-2024-grpc-client:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/vtb-api-2024-grpc-client:${{ steps.vars.outputs.sha_short }}
