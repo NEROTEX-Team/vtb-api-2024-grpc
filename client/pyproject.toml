@@ -2,7 +2,10 @@
 name = "client"
 version = "0.1.0"
 description = "client for grpc app vtb"
-authors = ["Danila Kutuzov <danilakutuzov@gmail.com>"]
+authors = [
+    "Danila Kutuzov <danilakutuzov@gmail.com>",
+    "Sergey Natalenko <sergey.natalenko@mail.ru>",
+]
 readme = "README.md"
 
 [tool.poetry.dependencies]

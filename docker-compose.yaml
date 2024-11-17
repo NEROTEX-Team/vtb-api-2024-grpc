@@ -16,8 +16,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  app:
-    image: andytakker/vtb-api-2024-grpc:latest
+  grpc_server:
+    image: andytakker/vtb-api-2024-grpc-server:latest
     ports:
       - "$APP_GRPC_PORT:$APP_GRPC_PORT"
     depends_on:
@@ -30,5 +30,13 @@ services:
       - APP_TLS_KEY_FILE_PATH=$APP_TLS_KEY_FILE_PATH
       - APP_TLS_CA_FILE_PATH=$APP_TLS_CA_FILE_PATH
 
+  grpc_client: 
+    image: andytakker/vtb-api-2024-grpc-client:latest
+    ports:
+      - "$APP_CLIENT_PORT:$APP_CLIENT_PORT"
+    depends_on:
+      - grpc_server
+    environment:
+      - APP_CLIENT_PORT=$APP_CLIENT_PORT
 volumes:
   postgres_data:
