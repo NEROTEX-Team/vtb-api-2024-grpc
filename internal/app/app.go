@@ -21,8 +21,6 @@ type App struct {
 func NewApp(ctx context.Context, scanner *antivirus.Scanner) (*App, error) {
 	a := &App{}
 
-	interceptors := scanner.UnaryServerInterceptor("File")
-
 	err := a.initDeps(ctx)
 	if err != nil {
 		return nil, err
