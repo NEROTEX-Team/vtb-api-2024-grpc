@@ -68,6 +68,7 @@ jobs:
 
   test:
     name: runner / test
+    needs: [golangci-lint, yamllint, hadolint, dotenv-linter, check-dependencies]
     runs-on: ubuntu-latest
     container: golang:1.23-alpine
     services:
@@ -94,7 +95,7 @@ jobs:
           APP_DATABASE_DSN: postgres://testuser:testpass@db:5432/testdb?sslmode=disable
 
   build-and-push-docker-server:
-    needs: [golangci-lint, yamllint, hadolint, dotenv-linter, check-dependencies]
+    needs: test
     if: github.ref == 'refs/heads/master'
     name: runner / build-and-push-docker-server
     runs-on: ubuntu-latest

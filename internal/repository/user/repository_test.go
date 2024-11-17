@@ -11,7 +11,7 @@ import (
 
 func SetupTestDB(t *testing.T) *pgxpool.Pool {
 	t.Helper()
-	dbDSN := os.Getenv("DB_DSN")
+	dbDSN := os.Getenv("APP_DATABASE_DSN")
 	if len(dbDSN) == 0 {
 		dbDSN = "postgres://testuser:testpass@localhost:5432/testdb?sslmode=disable"
 	}
