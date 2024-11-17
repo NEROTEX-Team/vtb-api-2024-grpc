@@ -7,7 +7,7 @@ actor Client
 rectangle "gRPC Client" as grpcClient
 
 node "Golang Microservice" as Microservice {
-    [gRPC Server]
+    [gRPC Server] as server
 }
 
 database "PostgreSQL" as DB
