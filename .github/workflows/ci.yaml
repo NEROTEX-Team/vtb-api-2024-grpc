@@ -32,6 +32,7 @@ jobs:
   hadolint:
     name: runner / hadolint
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - uses: actions/checkout@v4
       - uses: reviewdog/action-hadolint@v1
@@ -77,8 +78,8 @@ jobs:
         env:
           TZ: UTC
           POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testdb
-          POSTGRES_DB: testpass
+          POSTGRES_PASSWORD: testpsas
+          POSTGRES_DB: testdb
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
