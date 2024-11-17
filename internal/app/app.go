@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/antivirus"
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/config"
 	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 )
@@ -18,7 +17,7 @@ type App struct {
 	grpcServer      *grpc.Server
 }
 
-func NewApp(ctx context.Context, scanner *antivirus.Scanner) (*App, error) {
+func NewApp(ctx context.Context) (*App, error) {
 	a := &App{}
 
 	err := a.initDeps(ctx)
@@ -63,13 +62,23 @@ func (a *App) initServiceProvider(_ context.Context) error {
 }
 
 func (a *App) initGRPCServer(_ context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(a.serviceProvider.TLSCredentials()))
+	var grpcServeroptions []grpc.ServerOption
+
+	grpcServeroptions = append(grpcServeroptions, grpc.Creds(a.serviceProvider.TLSCredentials()))
+
+	if a.serviceProvider.antivirusConfig().useAntivirus {
+		grpcServeroptions = append(
+			grpcServeroptions,
+			grpc.UnaryInterceptor(
+				a.serviceProvider.antivirusScanner.UnaryServerInterceptor("photo"),
+			),
+		)
+	}
+
+	a.grpcServer = grpc.NewServer(grpcServeroptions...)
 
 	reflection.Register(a.grpcServer)
-	userImpl, err := a.serviceProvider.UserImpl()
-	if err != nil {
-		return err
-	}
+	userImpl := a.serviceProvider.UserImpl()
 	desc.RegisterUserV1Server(a.grpcServer, userImpl)
 
 	return nil

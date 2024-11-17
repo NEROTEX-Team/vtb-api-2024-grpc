@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	antivirus "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/antivirus"
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/api/user"
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/config"
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository"
@@ -15,7 +16,8 @@ import (
 )
 
 type serviceProvider struct {
-	grpcConfig config.GRPCConfig
+	grpcConfig     config.GRPCConfig
+	tlsCredentials credentials.TransportCredentials
 
 	DBCreds string
 
@@ -27,7 +29,9 @@ type serviceProvider struct {
 
 	userImpl *user.Implementation
 
-	tlsCredentials credentials.TransportCredentials
+	antivirusConf *config.antivirusConfig
+
+	antivirusScanner *antivirus.Scanner
 }
 
 func newServiceProvider() *serviceProvider {
@@ -55,24 +59,19 @@ func (s *serviceProvider) UserRepository() repository.UserRepository {
 	return s.userRepository
 }
 
-func (s *serviceProvider) UserService() (service.UserService, error) {
+func (s *serviceProvider) UserService() service.UserService {
 	if s.userService == nil {
 		s.userService = userService.NewService(s.UserRepository())
 	}
-	return s.userService, nil
+	return s.userService
 }
 
-func (s *serviceProvider) UserImpl() (*user.Implementation, error) {
+func (s *serviceProvider) UserImpl() *user.Implementation {
 	if s.userImpl == nil {
-		service, err := s.UserService()
-		if err != nil {
-			log.Fatalf("failed to get user service: %s", err.Error())
-			return nil, err
-		}
-		s.userImpl = user.NewImplementation(service)
+		s.userImpl = user.NewImplementation(s.UserService())
 	}
 
-	return s.userImpl, nil
+	return s.userImpl
 }
 
 func (s *serviceProvider) TLSCredentials() credentials.TransportCredentials {
@@ -112,4 +111,27 @@ func (s *serviceProvider) PGPool() *pgxpool.Pool {
 	}
 
 	return s.pool
+}
+
+func (s *serviceProvider) AntivirusConfig() *config.antivirusConfig {
+	if s.antivirusConf == nil {
+		antivirusConf, err := config.LoadAntivirusConfig()
+		if err != nil {
+			log.Fatalf("failed to load antivirus config: %s", err.Error())
+		}
+		s.antivirusConf = antivirusConf
+	}
+	return s.antivirusConf
+}
+
+func (s *serviceProvider) AntivirusScanner() *antivirus.Scanner {
+	if s.antivirusScanner == nil {
+		s.antivirusScanner = antivirus.NewScanner(
+			s.AntivirusConfig().address,
+			s.AntivirusConfig().protocol,
+			s.AntivirusConfig().timeout,
+			s.AntivirusConfig().useAntivirus,
+		)
+	}
+	return s.antivirusScanner
 }
