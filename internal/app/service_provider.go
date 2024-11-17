@@ -29,7 +29,7 @@ type serviceProvider struct {
 
 	userImpl *user.Implementation
 
-	antivirusConf *config.antivirusConfig
+	antivirusConf config.AntivirusConfig
 
 	antivirusScanner *antivirus.Scanner
 }
@@ -113,7 +113,7 @@ func (s *serviceProvider) PGPool() *pgxpool.Pool {
 	return s.pool
 }
 
-func (s *serviceProvider) AntivirusConfig() *config.antivirusConfig {
+func (s *serviceProvider) AntivirusConfig() config.AntivirusConfig {
 	if s.antivirusConf == nil {
 		antivirusConf, err := config.LoadAntivirusConfig()
 		if err != nil {
@@ -126,11 +126,12 @@ func (s *serviceProvider) AntivirusConfig() *config.antivirusConfig {
 
 func (s *serviceProvider) AntivirusScanner() *antivirus.Scanner {
 	if s.antivirusScanner == nil {
+		conf := s.AntivirusConfig()
 		s.antivirusScanner = antivirus.NewScanner(
-			s.AntivirusConfig().address,
-			s.AntivirusConfig().protocol,
-			s.AntivirusConfig().timeout,
-			s.AntivirusConfig().useAntivirus,
+			conf.Address(),
+			conf.Network(),
+			conf.Timeout(),
+			conf.UseAntivirus(),
 		)
 	}
 	return s.antivirusScanner

@@ -66,7 +66,7 @@ func (a *App) initGRPCServer(_ context.Context) error {
 
 	grpcServeroptions = append(grpcServeroptions, grpc.Creds(a.serviceProvider.TLSCredentials()))
 
-	if a.serviceProvider.antivirusConfig().useAntivirus {
+	if a.serviceProvider.AntivirusConfig().UseAntivirus() {
 		grpcServeroptions = append(
 			grpcServeroptions,
 			grpc.UnaryInterceptor(
