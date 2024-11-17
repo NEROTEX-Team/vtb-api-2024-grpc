@@ -6,9 +6,9 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/config"
 	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 )
 
@@ -34,7 +34,6 @@ func (a *App) Run() error {
 
 func (a *App) initDeps(ctx context.Context) error {
 	inits := []func(context.Context) error{
-		a.initConfig,
 		a.initServiceProvider,
 		a.initGRPCServer,
 	}
@@ -48,14 +47,6 @@ func (a *App) initDeps(ctx context.Context) error {
 	return nil
 }
 
-func (a *App) initConfig(_ context.Context) error {
-	err := config.Load(".env")
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (a *App) initServiceProvider(_ context.Context) error {
 	a.serviceProvider = newServiceProvider()
 	return nil
@@ -63,8 +54,11 @@ func (a *App) initServiceProvider(_ context.Context) error {
 
 func (a *App) initGRPCServer(_ context.Context) error {
 	var grpcServeroptions []grpc.ServerOption
-
-	grpcServeroptions = append(grpcServeroptions, grpc.Creds(a.serviceProvider.TLSCredentials()))
+	if a.serviceProvider.TLSCredentials() == nil {
+		grpcServeroptions = append(grpcServeroptions, grpc.Creds(insecure.NewCredentials()))
+	} else {
+		grpcServeroptions = append(grpcServeroptions, grpc.Creds(a.serviceProvider.TLSCredentials()))
+	}
 
 	if a.serviceProvider.AntivirusConfig().UseAntivirus() {
 		grpcServeroptions = append(

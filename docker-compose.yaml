@@ -18,6 +18,7 @@ services:
 
   grpc_server:
     image: andytakker/vtb-api-2024-grpc-server:latest
+    restart: on-failure:5
     ports:
       - "$APP_GRPC_PORT:$APP_GRPC_PORT"
     depends_on:
@@ -29,9 +30,11 @@ services:
       - APP_TLS_CERT_FILE_PATH=$APP_TLS_CERT_FILE_PATH
       - APP_TLS_KEY_FILE_PATH=$APP_TLS_KEY_FILE_PATH
       - APP_TLS_CA_FILE_PATH=$APP_TLS_CA_FILE_PATH
+      - APP_DATABASE_DSN=$APP_DATABASE_DSN
 
   grpc_client:
     image: andytakker/vtb-api-2024-grpc-client:latest
+    restart: on-failure:5
     ports:
       - "${APP_CLIENT_PORT:-8000}:${APP_CLIENT_PORT:-8000}"
     command: uvicorn client.main:app --host 0.0.0.0 --port ${APP_CLIENT_PORT:-8000}

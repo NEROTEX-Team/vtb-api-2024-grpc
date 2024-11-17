@@ -69,6 +69,7 @@ func (s *serviceProvider) UserService() service.UserService {
 func (s *serviceProvider) UserImpl() *user.Implementation {
 	if s.userImpl == nil {
 		s.userImpl = user.NewImplementation(s.UserService())
+		log.Print("User impl created")
 	}
 
 	return s.userImpl
@@ -79,7 +80,8 @@ func (s *serviceProvider) TLSCredentials() credentials.TransportCredentials {
 
 		tlsc, err := config.LoadTLSCredentials()
 		if err != nil {
-			log.Fatalf("failed to get tls credentials: %s", err.Error())
+			log.Printf("failed to get tls credentials: %s", err.Error())
+			return nil
 		}
 
 		s.tlsCredentials = tlsc
