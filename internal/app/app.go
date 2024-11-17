@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/antivirus"
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/config"
 	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 )
@@ -17,7 +18,7 @@ type App struct {
 	grpcServer      *grpc.Server
 }
 
-func NewApp(ctx context.Context) (*App, error) {
+func NewApp(ctx context.Context, scanner *antivirus.Scanner) (*App, error) {
 	a := &App{}
 
 	err := a.initDeps(ctx)
