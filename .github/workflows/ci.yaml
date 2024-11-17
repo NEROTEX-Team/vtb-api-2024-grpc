@@ -78,7 +78,7 @@ jobs:
         env:
           TZ: UTC
           POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpsas
+          POSTGRES_PASSWORD: testpass
           POSTGRES_DB: testdb
         options: >-
           --health-cmd pg_isready
