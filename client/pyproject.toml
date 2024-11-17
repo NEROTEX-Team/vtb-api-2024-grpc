@@ -16,6 +16,7 @@ Jinja2 = "^3.1.4"
 grpcio = "^1.68.0"
 grpcio-tools = "^1.68.0"
 googleapis-common-protos = "^1.66.0"
+python-multipart = "^0.0.17"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
