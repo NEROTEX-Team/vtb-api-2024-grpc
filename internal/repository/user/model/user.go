@@ -6,14 +6,10 @@ import (
 )
 
 type User struct {
-	Id        string
-	Info      UserInfo
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-}
-
-type UserInfo struct {
+	ID        string
 	FirstName string
 	LastName  string
 	Email     string
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
 }

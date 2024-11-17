@@ -15,17 +15,13 @@ service UserV1 {
     rpc FetchUserByEmail(FetchUserByEmailRequest) returns (FetchUserByEmailResponse);
 }
 
-message UserInfo {
-    string firstname = 1;
-    string lastname = 2;
-    string email = 3;
-}
-
 message User {
     string id = 1;
-    UserInfo info = 2;  
-    google.protobuf.Timestamp created_at = 3;
-    google.protobuf.Timestamp updated_at = 4;
+    string email = 2;
+    string first_name = 3;
+    string last_name = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
 }
 
 message FetchUserByIdRequest {
@@ -37,7 +33,9 @@ message FetchUserByIdResponse {
 }
 
 message CreateUserRequest {
-    UserInfo info = 1;
+    string email = 1;
+    string first_name = 2;
+    string last_name = 3;
 }
 
 message CreateUserResponse {
@@ -72,7 +70,9 @@ message DeleteUserByIdRequest {
 
 message UpdateUserRequest {
     string id = 1;
-    UserInfo info = 2;
+    string email = 2;
+    string first_name = 3;
+    string last_name = 4;
 }
 
 message Empty {

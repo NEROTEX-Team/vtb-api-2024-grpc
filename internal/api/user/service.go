@@ -1,12 +1,17 @@
 package user
 
 import (
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository"
-	def "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/service"
+	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/service"
+	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 )
 
-var _ def.UserService = (*service)(nil)
+type Implementation struct {
+	desc.UnimplementedUserV1Server
+	userService service.UserService
+}
 
-type service struct {
-	userRepository repository.UserRepository
+func NewImplementation(userService service.UserService) *Implementation {
+	return &Implementation{
+		userService: userService,
+	}
 }

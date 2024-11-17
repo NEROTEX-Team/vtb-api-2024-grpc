@@ -1,0 +1,23 @@
+@startuml
+skinparam direction left to right
+
+actor Пользователь as User
+
+node "Python Microservice" {
+    component "FastAPI" <<Python>> as python_server
+
+    component "gRPC Client" <<Python>> as client
+}
+
+node "Golang Microservice" as Microservice {
+    component "gRPC Server" <<Go>> as server
+}
+
+User --> python_server : HTTP запрос
+python_server -> client : Вызов gRPC метода
+client --> server : gRPC запрос
+server --> client : gRPC ответ
+client -> python_server : Обработка ответа
+python_server --> User : Получение ответа
+
+@enduml

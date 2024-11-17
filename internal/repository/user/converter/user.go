@@ -15,25 +15,11 @@ func ToUserFromRepo(user *repoModel.User) *model.User {
 	}
 
 	return &model.User{
-		Id:        user.Id,
-		Info:      ToUserInfoFromRepo(user.Info),
+		ID:        user.ID,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: updatedAt,
-	}
-}
-
-func ToUserInfoFromRepo(info repoModel.UserInfo) model.UserInfo {
-	return model.UserInfo{
-		FirstName: info.FirstName,
-		LastName:  info.LastName,
-		Email:     info.Email,
-	}
-}
-
-func ToUserInfoFromService(info *model.UserInfo) repoModel.UserInfo {
-	return repoModel.UserInfo{
-		FirstName: info.FirstName,
-		LastName:  info.LastName,
-		Email:     info.Email,
 	}
 }

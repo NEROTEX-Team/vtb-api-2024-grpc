@@ -6,9 +6,11 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
-	"internal/antivirus"
-	"internal/config"
+	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/antivirus"
+	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/config"
+	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 )
 
 type App struct {
@@ -59,6 +61,19 @@ func (a *App) initConfig(_ context.Context) error {
 
 func (a *App) initServiceProvider(_ context.Context) error {
 	a.serviceProvider = newServiceProvider()
+	return nil
+}
+
+func (a *App) initGRPCServer(_ context.Context) error {
+	a.grpcServer = grpc.NewServer(grpc.Creds(a.serviceProvider.TLSCredentials()))
+
+	reflection.Register(a.grpcServer)
+	userImpl, err := a.serviceProvider.UserImpl()
+	if err != nil {
+		return err
+	}
+	desc.RegisterUserV1Server(a.grpcServer, userImpl)
+
 	return nil
 }
 

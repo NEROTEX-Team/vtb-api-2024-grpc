@@ -7,6 +7,7 @@ import (
 )
 
 type UserService interface {
-	Create(ctx context.Context, info *model.UserInfo) (string, error)
-	Get(ctx context.Context, uuid string) (*model.User, error)
+	CreateUser(ctx context.Context, userData *model.CreateUser) (*model.User, error)
+	FetchUserById(ctx context.Context, userID string) (*model.User, error)
+	FetchUserList(ctx context.Context, params *model.UserListParams) (*model.UserList, error)
 }

@@ -7,12 +7,12 @@ import (
 	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 )
 
-func (i *Implementation) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse, error) {
-	user, err := i.userService.Get(ctx, req.Id())
+func (i *Implementation) FetchById(ctx context.Context, req *desc.FetchUserByIdRequest) (*desc.FetchUserByIdResponse, error) {
+	user, err := i.userService.FetchUserById(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
-	return &desc.GetResponse{
+	return &desc.FetchUserByIdResponse{
 		User: converter.ToUserFromService(user),
 	}, nil
 }

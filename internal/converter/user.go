@@ -6,32 +6,26 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+func ToCreateUserFromDesc(user *desc.CreateUserRequest) *model.CreateUser {
+	return &model.CreateUser{
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+	}
+}
+
 func ToUserFromService(user *model.User) *desc.User {
-	var updatedAt *timestamppd.Timestamp
+	var updatedAt *timestamppb.Timestamp
 	if user.UpdatedAt != nil {
-		updateAt = timestamppb.New(*user.UpdatedAt)
+		updatedAt = timestamppb.New(*user.UpdatedAt)
 	}
 
 	return &desc.User{
-		Id:        user.UUID,
-		Info:      ToUserInfoFromService(user.Info),
+		Id:        user.ID,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
 		CreatedAt: timestamppb.New(user.CreatedAt),
 		UpdatedAt: updatedAt,
-	}
-}
-
-func ToUserInfoFromService(info model.userInfo) *desc.UserInfo {
-	return &desc.UserInfo{
-		FirstName: info.FirstName,
-		LastName:  info.LastName,
-		Email:     info.Email,
-	}
-}
-
-func ToUserInfoFromDesc(info *desc.UserInfo) *model.UserInfo {
-	return &model.UserInfo{
-		FirstName: info.FirstName,
-		LastName:  info.LastName,
-		Email:     info.Email,
 	}
 }
