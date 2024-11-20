@@ -1,9 +1,10 @@
 package converter
 
 import (
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/model"
-	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	model "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/entities"
+	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 )
 
 func ToCreateUserFromDesc(user *desc.CreateUserRequest) *model.CreateUser {

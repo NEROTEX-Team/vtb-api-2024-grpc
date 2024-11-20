@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/model"
+	model "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/entities"
 )
 
 func (s *service) FetchUserList(ctx context.Context, params *model.UserListParams) (*model.UserList, error) {

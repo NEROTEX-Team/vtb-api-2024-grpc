@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/model"
+	model "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/entities"
 )
 
 type UserService interface {

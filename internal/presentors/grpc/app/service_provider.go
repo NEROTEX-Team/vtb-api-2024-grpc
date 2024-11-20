@@ -5,18 +5,19 @@ import (
 	"log"
 
 	antivirus "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/antivirus"
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/api/user"
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/config"
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository"
-	userRepository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository/user"
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/service"
-	userService "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/service/user"
+	database "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database"
+	userRepository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database/repository/user"
+	repository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/repositories"
+	service "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/services"
+	userService "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/services/user"
+	grpc "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/presentors/grpc"
+	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/presentors/grpc/api/user"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc/credentials"
 )
 
 type serviceProvider struct {
-	grpcConfig     config.GRPCConfig
+	grpcConfig     grpc.GRPCConfig
 	tlsCredentials credentials.TransportCredentials
 
 	DBCreds string
@@ -29,7 +30,7 @@ type serviceProvider struct {
 
 	userImpl *user.Implementation
 
-	antivirusConf config.AntivirusConfig
+	antivirusConf antivirus.AntivirusConfig
 
 	antivirusScanner *antivirus.Scanner
 }
@@ -38,9 +39,9 @@ func newServiceProvider() *serviceProvider {
 	return &serviceProvider{}
 }
 
-func (s *serviceProvider) GRPCConfig() config.GRPCConfig {
+func (s *serviceProvider) GRPCConfig() grpc.GRPCConfig {
 	if s.grpcConfig == nil {
-		cfg, err := config.NewGRPCConfig()
+		cfg, err := grpc.NewGRPCConfig()
 		if err != nil {
 			log.Fatalf("failed to get grpc config: %s", err.Error())
 		}
@@ -78,7 +79,7 @@ func (s *serviceProvider) UserImpl() *user.Implementation {
 func (s *serviceProvider) TLSCredentials() credentials.TransportCredentials {
 	if s.tlsCredentials == nil {
 
-		tlsc, err := config.LoadTLSCredentials()
+		tlsc, err := grpc.LoadTLSCredentials()
 		if err != nil {
 			log.Printf("failed to get tls credentials: %s", err.Error())
 			return nil
@@ -92,7 +93,7 @@ func (s *serviceProvider) TLSCredentials() credentials.TransportCredentials {
 
 func (s *serviceProvider) DatabaseCredentials() string {
 	if s.DBCreds == "" {
-		creds, err := config.LoadDatabaseCredentials()
+		creds, err := database.LoadDatabaseCredentials()
 		if err != nil {
 			log.Fatalf("failed to get database credentials: %s", err.Error())
 		}
@@ -115,9 +116,9 @@ func (s *serviceProvider) PGPool() *pgxpool.Pool {
 	return s.pool
 }
 
-func (s *serviceProvider) AntivirusConfig() config.AntivirusConfig {
+func (s *serviceProvider) AntivirusConfig() antivirus.AntivirusConfig {
 	if s.antivirusConf == nil {
-		antivirusConf, err := config.LoadAntivirusConfig()
+		antivirusConf, err := antivirus.LoadAntivirusConfig()
 		if err != nil {
 			log.Fatalf("failed to load antivirus config: %s", err.Error())
 		}

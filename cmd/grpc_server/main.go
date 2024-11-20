@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/app"
+	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/presentors/grpc/app"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-package config
+package antivirus
 
 import (
 	"os"
