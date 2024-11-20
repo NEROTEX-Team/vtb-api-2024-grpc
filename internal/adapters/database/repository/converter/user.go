@@ -3,8 +3,8 @@ package converter
 import (
 	"time"
 
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/model"
-	repoModel "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository/user/model"
+	repoModel "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database/repository/user/model"
+	model "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/entities"
 )
 
 func ToUserFromRepo(user *repoModel.User) *model.User {

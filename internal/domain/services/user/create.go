@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/model"
+	model "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/entities"
 )
 
 func (s *service) CreateUser(ctx context.Context, userData *model.CreateUser) (*model.User, error) {

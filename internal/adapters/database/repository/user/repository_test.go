@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/model"
+	model "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/entities"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

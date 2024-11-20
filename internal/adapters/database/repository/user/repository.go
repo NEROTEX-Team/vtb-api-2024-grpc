@@ -6,10 +6,10 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/model"
-	def "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository"
-	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository/user/converter"
-	repoModel "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/repository/user/model"
+	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database/repository/converter"
+	repoModel "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database/repository/user/model"
+	model "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/entities"
+	def "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/repositories"
 )
 
 var _ def.UserRepository = (*repository)(nil)
