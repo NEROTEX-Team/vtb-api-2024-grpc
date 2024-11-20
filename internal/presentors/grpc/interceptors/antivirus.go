@@ -1,23 +1,24 @@
-package antivirus
+package interceptors
 
 import (
 	"context"
 	"os"
 	"reflect"
 
+	antivirusAdapter "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/antivirus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (s *Scanner) UnaryServerInterceptor(fileFieldName string) grpc.UnaryServerInterceptor {
+func AntivirusInterceptor(s *antivirusAdapter.Scanner, fileFieldName string) grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
 		req interface{},
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-		if !s.useAntivirus {
+		if !s.UseAntivirus() {
 			return handler(ctx, req)
 		}
 

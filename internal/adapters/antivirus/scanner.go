@@ -33,6 +33,10 @@ func NewScanner(address, network string, timeout time.Duration, useAntivirus boo
 	}
 }
 
+func (s *Scanner) UseAntivirus() bool {
+	return s.useAntivirus
+}
+
 func (s *Scanner) ScanFile(filePath string) error {
 	if !s.useAntivirus {
 		return nil
