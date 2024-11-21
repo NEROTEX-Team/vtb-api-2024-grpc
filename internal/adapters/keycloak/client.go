@@ -27,6 +27,7 @@ func NewKeycloakClient(cfg KeycloakConfig) *KeycloakClient {
 
     return &KeycloakClient{
         verifier: verifier,
+		ClientID: cfg.ClientID,
     }
 }
 
