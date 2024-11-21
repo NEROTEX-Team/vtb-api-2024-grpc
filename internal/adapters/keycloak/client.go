@@ -1,29 +1,39 @@
-package keycloak
+package adapters
 
 import (
-	"context"
+    "context"
 
-	"github.com/coreos/go-oicd"
+    "github.com/coreos/go-oidc"
 )
 
 type KeycloakConfig struct {
-	IssuerURL string
-	ClientID string
+    IssuerURL string
+    ClientID  string
 }
 
 type KeycloakClient struct {
-	verifier *oicd.IDTokenVerifier
+    verifier *oidc.IDTokenVerifier
 }
 
-func NewKeycloakClient(ctx context.Context, config KeycloakConfig) (*KeycloakClient, error) {
-	verifier, err := oicd.NewIDTokenVerifier(ctx, config.IssuerURL, config.ClientID)
-	if err != nil {
-		return nil, err
-	}
-	return &KeycloakClient{verifier: verifier}, nil
+func NewKeycloakClient(cfg KeycloakConfig) *KeycloakClient {
+    provider, err := oidc.NewProvider(context.Background(), cfg.IssuerURL)
+    if err != nil {
+        panic(err)
+    }
+
+    verifier := provider.Verifier(&oidc.Config{
+        ClientID: cfg.ClientID,
+    })
+
+    return &KeycloakClient{
+        verifier: verifier,
+    }
 }
 
-func (c *KeycloakClient) VerifyIDToken(ctx context.Context, token string) (*oicd.IDToken, error) {
-	return c.verifier.Verify(ctx, token)
+func (kc *KeycloakClient) VerifyToken(ctx context.Context, token string) (*oidc.IDToken, error) {
+    idToken, err := kc.verifier.Verify(ctx, token)
+    if err != nil {
+        return nil, err
+    }
+    return idToken, nil
 }
-
