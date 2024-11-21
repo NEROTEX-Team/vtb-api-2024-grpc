@@ -5,6 +5,7 @@ import (
 	"log"
 
 	antivirus "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/antivirus"
+	keycloak "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/keycloak"
 	database "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database"
 	userRepository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database/repository/user"
 	repository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/repositories"
@@ -138,4 +139,12 @@ func (s *serviceProvider) AntivirusScanner() *antivirus.Scanner {
 		)
 	}
 	return s.antivirusScanner
+}
+
+func (s *serviceProvider) KeycloakConfig() *keycloak.KeycloakConfig {
+	cfg, err := keycloak.LoadKeycloakConfig()
+	if err != nil {
+		log.Fatalf("failed to load keycloak config: %s", err.Error())
+	}
+	return cfg
 }
