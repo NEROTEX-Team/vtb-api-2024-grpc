@@ -17,10 +17,78 @@ grpcio = "^1.68.0"
 grpcio-tools = "^1.68.0"
 googleapis-common-protos = "^1.66.0"
 python-multipart = "^0.0.17"
+dishka = "^1.4.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
+pre-commit = "^4.0.1"
+mypy = "^1.13.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 88
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+]
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+exclude = [
+    "./client/adapters/grpc/generated/*.py",
+]
+
+[tool.ruff.lint]
+select = [
+    "BLE",
+    "C90",
+    "E",
+    "F",
+    "G",
+    "I",
+    "ICN",
+    "ISC",
+    "PLE",
+    "Q",
+    "RUF006",
+    "RUF100",
+    "T10",
+    "T20",
+    "TID",
+    "UP",
+    "W",
+]
+ignore = ["ISC001"]
+fixable = ["ALL"]
+exclude = [
+    "./client/adapters/grpc/generated",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["client", "tests"]
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = false
+no_implicit_optional = true
+exclude = "./client/adapters/grpc/generated/*.py"
+
+
+
+[[tool.mypy.overrides]]
+module = [
+    "grpc.*",
+    "google.protobuf.*",
+    "client.adapters.grpc.proto.*",
+]
+ignore_missing_imports = true

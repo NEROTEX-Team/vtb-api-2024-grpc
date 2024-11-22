@@ -1,6 +1,5 @@
-from fastapi import FastAPI
+from client.presentors.rest.config import RestConfig
+from client.presentors.rest.factory import RestService
 
-from client.routers import users
-
-app = FastAPI(title="User Management System")
-app.include_router(users.router, prefix="/users", tags=["users"])
+config = RestConfig()
+app = RestService(config=config).create_application()

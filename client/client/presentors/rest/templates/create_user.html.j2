@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base.html.j2' %}
 
 {% block content %}
 <h2>Create New User</h2>
@@ -12,5 +12,5 @@
     <button type="submit">Create User</button>
 </form>
 <br>
-<a href="{{ url_for('users:read_users') }}">Back to Users List</a>
+<a href="{{ url_for('read_users') }}">Back to Users List</a>
 {% endblock %}
