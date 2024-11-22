@@ -2,12 +2,14 @@ import logging
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Final
 
 from dishka import make_async_container
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from grpc.aio import AioRpcError
 
 from client.adapters.grpc.di import GRPCProvider
@@ -20,7 +22,7 @@ from client.presentors.rest.handlers import (
     http_exception_handler,
 )
 from client.presentors.rest.routers.api.router import router as api_router
-from client.presentors.rest.routers.templates.router import router as template_router
+from client.presentors.rest.routers.views.router import router as template_router
 
 log = logging.getLogger(__name__)
 
@@ -31,6 +33,8 @@ EXCEPTION_HANDLERS: Final[ExceptionHandlersType] = (
     (ClientException, client_exception_handler),
     (AioRpcError, grpc_error_handler),
 )
+
+PROJECT_PATH = Path(__file__).parent.parent.parent
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -62,7 +66,7 @@ class RestService:
         self.set_routes(app=app)
         self.set_exceptions(app=app)
         self.set_dependencies(app=app)
-
+        self.set_static(app=app)
         log.info("REST service app configured")
         return app
 
@@ -89,6 +93,13 @@ class RestService:
             RestProvider(),
         )
         setup_dishka(container=container, app=app)
+
+    def set_static(self, app: FastAPI) -> None:
+        app.mount(
+            "/static",
+            StaticFiles(directory=PROJECT_PATH / "presentors/rest/static"),
+            name="static",
+        )
 
 
 @asynccontextmanager

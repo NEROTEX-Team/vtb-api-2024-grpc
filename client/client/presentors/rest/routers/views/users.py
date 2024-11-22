@@ -9,22 +9,25 @@ from fastapi.templating import Jinja2Templates
 
 from client.adapters.grpc.client import GRPCClient
 
-router = APIRouter(prefix="/users", route_class=DishkaRoute)
+router = APIRouter(
+    prefix="/users",
+    route_class=DishkaRoute,
+)
 
 
 def timestamp_to_datetime(ts: Any) -> datetime:
     return datetime.fromtimestamp(ts.seconds)
 
 
-@router.get("/", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse, name="users:read_users")
 async def read_users(
     request: Request,
     templates: FromDishka[Jinja2Templates],
     grpc_client: FromDishka[GRPCClient],
 ) -> HTMLResponse:
-    users = await grpc_client.fetch_user_list()
+    user_list = await grpc_client.fetch_user_list()
     return templates.TemplateResponse(
-        "index.html", {"request": request, "users": users}
+        "index.html.j2", {"request": request, "user_list": user_list}
     )
 
 
@@ -32,7 +35,7 @@ async def read_users(
 async def create_user_form(
     request: Request, templates: FromDishka[Jinja2Templates]
 ) -> HTMLResponse:
-    return templates.TemplateResponse("create_user.html", {"request": request})
+    return templates.TemplateResponse("create_user.html.j2", {"request": request})
 
 
 @router.post("/create")
@@ -57,7 +60,7 @@ async def user_detail(
 ) -> HTMLResponse:
     user = await grpc_client.fetch_user_by_id(user_id=user_id)
     return templates.TemplateResponse(
-        "user_detail.html",
+        "user_detail.html.j2",
         {
             "request": request,
             "user": user,
@@ -75,7 +78,7 @@ async def update_user_form(
 ) -> HTMLResponse:
     user = await grpc_client.fetch_user_by_id(user_id=user_id)
     return templates.TemplateResponse(
-        "update_user.html", {"request": request, "user": user}
+        "update_user.html.j2", {"request": request, "user": user}
     )
 
 

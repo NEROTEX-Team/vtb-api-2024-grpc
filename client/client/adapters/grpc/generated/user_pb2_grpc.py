@@ -39,10 +39,10 @@ class UserV1Stub(object):
                 request_serializer=user__pb2.FetchUserByIdRequest.SerializeToString,
                 response_deserializer=user__pb2.FetchUserByIdResponse.FromString,
                 _registered_method=True)
-        self.FetchListUsers = channel.unary_unary(
-                '/user.UserV1/FetchListUsers',
-                request_serializer=user__pb2.FetchListUsersRequest.SerializeToString,
-                response_deserializer=user__pb2.FetchListUsersResponse.FromString,
+        self.FetchUserList = channel.unary_unary(
+                '/user.UserV1/FetchUserList',
+                request_serializer=user__pb2.FetchUserListRequest.SerializeToString,
+                response_deserializer=user__pb2.FetchUserListResponse.FromString,
                 _registered_method=True)
         self.UpdateUser = channel.unary_unary(
                 '/user.UserV1/UpdateUser',
@@ -75,7 +75,7 @@ class UserV1Servicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def FetchListUsers(self, request, context):
+    def FetchUserList(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -113,10 +113,10 @@ def add_UserV1Servicer_to_server(servicer, server):
                     request_deserializer=user__pb2.FetchUserByIdRequest.FromString,
                     response_serializer=user__pb2.FetchUserByIdResponse.SerializeToString,
             ),
-            'FetchListUsers': grpc.unary_unary_rpc_method_handler(
-                    servicer.FetchListUsers,
-                    request_deserializer=user__pb2.FetchListUsersRequest.FromString,
-                    response_serializer=user__pb2.FetchListUsersResponse.SerializeToString,
+            'FetchUserList': grpc.unary_unary_rpc_method_handler(
+                    servicer.FetchUserList,
+                    request_deserializer=user__pb2.FetchUserListRequest.FromString,
+                    response_serializer=user__pb2.FetchUserListResponse.SerializeToString,
             ),
             'UpdateUser': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateUser,
@@ -177,7 +177,7 @@ class UserV1(object):
             _registered_method=True)
 
     @staticmethod
-    def FetchListUsers(request,
+    def FetchUserList(request,
             target,
             options=(),
             channel_credentials=None,
@@ -190,9 +190,9 @@ class UserV1(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/user.UserV1/FetchListUsers',
-            user__pb2.FetchListUsersRequest.SerializeToString,
-            user__pb2.FetchListUsersResponse.FromString,
+            '/user.UserV1/FetchUserList',
+            user__pb2.FetchUserListRequest.SerializeToString,
+            user__pb2.FetchUserListResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -20,13 +20,18 @@ class GRPCClient:
 
     async def fetch_user_list(self, *, limit: int = 100, offset: int = 0) -> UserList:
         try:
-            user_list_data = await self.__user_stub.FetchListUsers(
-                user_pb2.FetchListUsersRequest(limit=limit, offset=offset),  # type: ignore
+            user_list_data: user_pb2.FetchUserListResponse = (  # type: ignore
+                await self.__user_stub.FetchUserList(
+                    user_pb2.FetchUserListRequest(limit=limit, offset=offset),  # type: ignore
+                )
             )
         except grpc.aio.AioRpcError as e:
             log.error("Failed to fetch user list: %s", e)
             raise GRPCClientException("Failed to fetch user list") from e
-        return user_list_data
+        return UserList(
+            total=user_list_data.total,
+            users=[User(**user) for user in user_list_data.users],
+        )
 
     async def fetch_user_by_id(self, *, user_id: UUID) -> User | None:
         try:

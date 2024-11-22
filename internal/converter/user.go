@@ -30,3 +30,11 @@ func ToUserFromService(user *model.User) *desc.User {
 		UpdatedAt: updatedAt,
 	}
 }
+
+func ToUsersFromService(users *[]model.User) []*desc.User {
+	var result []*desc.User
+	for _, user := range *users {
+		result = append(result, ToUserFromService(&user))
+	}
+	return result
+}
