@@ -12,7 +12,13 @@ from client.application.exceptions import (
     EntityAlreadyExistsException,
     EntityNotFoundException,
 )
-from client.domain.entities.user import CreateUser, UpdateUser, User, UserList
+from client.domain.entities.user import (
+    CreateUser,
+    UpdateUser,
+    User,
+    UserList,
+    UserListParams,
+)
 
 log = logging.getLogger(__name__)
 
@@ -23,11 +29,13 @@ class GRPCClient:
     def __init__(self, channel: Channel) -> None:
         self.__user_stub = user_pb2_grpc.UserV1Stub(channel)  # type: ignore
 
-    async def fetch_user_list(self, *, limit: int = 100, offset: int = 0) -> UserList:
+    async def fetch_user_list(self, *, params: UserListParams) -> UserList:
         try:
             user_list_data: user_pb2.FetchUserListResponse = (  # type: ignore
                 await self.__user_stub.FetchUserList(
-                    user_pb2.FetchUserListRequest(limit=limit, offset=offset),  # type: ignore
+                    user_pb2.FetchUserListRequest(  # type: ignore
+                        limit=params.limit, offset=params.offset
+                    ),
                 )
             )
         except grpc.aio.AioRpcError as e:

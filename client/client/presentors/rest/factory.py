@@ -14,6 +14,8 @@ from grpc.aio import AioRpcError
 
 from client.adapters.grpc.di import GRPCProvider
 from client.application.exceptions import ClientException
+from client.adapters.repositories.di import RepositoryProvider
+from client.domain.di import DomainProvider
 from client.presentors.rest.config import RestConfig
 from client.presentors.rest.di import RestProvider
 from client.presentors.rest.handlers import (
@@ -91,6 +93,8 @@ class RestService:
         container = make_async_container(
             GRPCProvider(grpc_config=self.config.grpc),
             RestProvider(),
+            DomainProvider(),
+            RepositoryProvider(),
         )
         setup_dishka(container=container, app=app)
 
