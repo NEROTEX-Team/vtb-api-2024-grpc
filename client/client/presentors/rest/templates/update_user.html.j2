@@ -1,16 +1,43 @@
 {% extends 'base.html.j2' %}
 
 {% block content %}
-<h2>Update User</h2>
-<form method="post">
-    <label>Email:</label><br>
-    <input type="email" name="email" value="{{ user.email }}" required><br><br>
-    <label>First Name:</label><br>
-    <input type="text" name="first_name" value="{{ user.first_name }}" required><br><br>
-    <label>Last Name:</label><br>
-    <input type="text" name="last_name" value="{{ user.last_name }}" required><br><br>
-    <button type="submit">Update User</button>
-</form>
-<br>
-<a href="{{ url_for('users:user_detail', user_id=user.id) }}">Back to User Details</a>
+<div class="section">
+  <div class="row">
+    <h2>Обновить пользователя<br>{{ user.id }}</h2>
+  </div>
+  <div class="col">
+    <div class="row">
+      <a class="waves-effect waves-light btn-small" href="{{ url_for('users:list') }}">
+        <i class="material-icons left">arrow_back</i>Назад к списку пользователей
+      </a>
+    </div>
+    <div class="row">
+      <a class="waves-effect waves-light btn-small" href="{{ url_for('users:detail', user_id=user.id) }}">
+        <i class="material-icons left">arrow_back</i>Назад к информации о пользователе
+      </a>
+    </div>
+  </div>
+  <form method="post" class="col s6">
+    <div class="row">
+      <div class="input-field col s6">
+        <input placeholder="Введите e-mail" id="email" type="email" class="validate" name="email" value="{{ user.email }}">
+        <label for="email">E-mail</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <input placeholder="Введите имя" id="first_name" type="text" class="validate" name="first_name" value="{{ user.first_name }}" required>
+        <label for="first_name">Имя</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <input placeholder="Введите Фамилию" id="last_name" type="text" class="validate" name="last_name" value="{{ user.last_name }}"required>
+        <label for="last_name">Фамилия</label>
+      </div>
+    </div>
+    <button class="btn waves-effect waves-light" type="submit">Обновить пользователя</button>
+  </form>
+</div>
+
 {% endblock %}

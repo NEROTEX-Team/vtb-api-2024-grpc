@@ -2,9 +2,11 @@ package user
 
 import (
 	"context"
+	"strings"
 	"sync"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database/repository/converter"
 	repoModel "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database/repository/user/model"
@@ -33,16 +35,23 @@ func (r *repository) CreateUser(ctx context.Context, userData *model.CreateUserW
 	r.m.Lock()
 	defer r.m.Unlock()
 	var user repoModel.User
-	err := r.pool.QueryRow(ctx, `
-		INSERT INTO users (id, first_name, last_name, email)
-		VALUES ($1, $2, $3, $4)
+	hashedPassword, err := HashPassword(userData.Password)
+	if err != nil {
+		return nil, err
+	}
+	err = r.pool.QueryRow(ctx, `
+		INSERT INTO users (id, email, hashed_password, first_name, last_name)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING created_at, updated_at
-	`, userData.ID, userData.FirstName, userData.LastName, userData.Email).Scan(
+	`, userData.ID, userData.Email, hashedPassword, userData.FirstName, userData.LastName).Scan(
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
 
 	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key value") {
+			return nil, model.ErrorUserAlreadyExists
+		}
 		return nil, err
 	}
 	user.ID = userData.ID
@@ -68,7 +77,7 @@ func (r *repository) FetchUserById(ctx context.Context, userID string) (*model.U
 			created_at,
 			updated_at F
 		FROM users
-		WHERE id = $1
+		WHERE id = $1 AND deleted_at IS NULL
 	`, userID).Scan(
 		&user.ID,
 		&user.FirstName,
@@ -158,7 +167,7 @@ func (r *repository) UpdateUserById(_ context.Context, userData *model.UpdateUse
 	err := r.pool.QueryRow(context.Background(), `
 		UPDATE users
 		SET first_name = $2, last_name = $3, email = $4
-		WHERE id = $1
+		WHERE id = $1 AND deleted_at IS NULL
 		RETURNING id, first_name, last_name, email, created_at, updated_at
 	`, userData.ID, userData.FirstName, userData.LastName, userData.Email).Scan(
 		&user.ID,
@@ -202,7 +211,7 @@ func (r *repository) FetchUserByEmail(ctx context.Context, email string) (*model
 			created_at,
 			updated_at
 		FROM users
-		WHERE  = $1
+		WHERE email = $1 AND deleted_at IS NULL
 	`, email).Scan(
 		&user.ID,
 		&user.FirstName,
@@ -217,4 +226,9 @@ func (r *repository) FetchUserByEmail(ctx context.Context, email string) (*model
 	}
 
 	return converter.ToUserFromRepo(&user), nil
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
 }

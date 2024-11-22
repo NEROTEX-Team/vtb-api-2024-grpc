@@ -20,7 +20,7 @@ class User:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class UserList:
     total: int
-    users: Sequence[User]
+    items: Sequence[User]
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -32,6 +32,7 @@ class UserListParams:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class CreateUser:
     email: str
+    password: str
     first_name: str
     last_name: str
 

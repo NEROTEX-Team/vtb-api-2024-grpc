@@ -1,4 +1,6 @@
 import logging
+from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID
 
 import grpc
@@ -6,8 +8,11 @@ from grpc.aio import Channel
 
 from client.adapters.grpc.exception import GRPCClientException
 from client.adapters.grpc.generated import user_pb2, user_pb2_grpc
-from client.application.exceptions import EntityNotFoundException
-from client.domain.entities.user import User, UserList
+from client.application.exceptions import (
+    EntityAlreadyExistsException,
+    EntityNotFoundException,
+)
+from client.domain.entities.user import CreateUser, UpdateUser, User, UserList
 
 log = logging.getLogger(__name__)
 
@@ -30,7 +35,7 @@ class GRPCClient:
             raise GRPCClientException("Failed to fetch user list") from e
         return UserList(
             total=user_list_data.total,
-            users=[User(**user) for user in user_list_data.users],
+            items=[convert_grpc_user_to_user(user) for user in user_list_data.users],
         )
 
     async def fetch_user_by_id(self, *, user_id: UUID) -> User | None:
@@ -43,38 +48,43 @@ class GRPCClient:
                 return None
             log.error("Failed to fetch user by id: %s", e)
             raise GRPCClientException(f"Failed to fetch user by id {user_id}") from e
-        return user_data
+        return convert_grpc_user_to_user(user_data.user)
 
-    async def create_user(self, *, email: str, first_name: str, last_name: str) -> User:
+    async def create_user(self, *, user_data: CreateUser) -> User:
         try:
-            user_data = await self.__user_stub.CreateUser(
+            created_user_data = await self.__user_stub.CreateUser(
                 user_pb2.CreateUserRequest(  # type: ignore
-                    email=email, first_name=first_name, last_name=last_name
+                    email=user_data.email,
+                    password=user_data.password,
+                    first_name=user_data.first_name,
+                    last_name=user_data.last_name,
                 ),
             )
         except grpc.aio.AioRpcError as e:
+            if e.code() == grpc.StatusCode.ALREADY_EXISTS:
+                raise EntityAlreadyExistsException(
+                    entity=User, unique_id=user_data.email
+                )
             log.error("Failed to create user: %s", e)
-            raise GRPCClientException(f"Failed to create user {email}") from e
-        return user_data
+            raise GRPCClientException(f"Failed to create user {user_data.email}") from e
+        return convert_grpc_user_to_user(created_user_data.user)
 
-    async def update_user(
-        self, *, user_id: UUID, email: str, first_name: str, last_name: str
-    ) -> User:
+    async def update_user(self, *, user_data: UpdateUser) -> User:
         try:
-            user_data = await self.__user_stub.UpdateUser(
+            updated_user_data = await self.__user_stub.UpdateUser(
                 user_pb2.UpdateUserRequest(  # type: ignore
-                    id=str(user_id),
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name,
+                    id=str(user_data.id),
+                    email=user_data.email,
+                    first_name=user_data.first_name,
+                    last_name=user_data.last_name,
                 ),
             )
         except grpc.aio.AioRpcError as e:
             if e.code() == grpc.StatusCode.NOT_FOUND:
-                raise EntityNotFoundException(entity=User, entity_id=user_id)
+                raise EntityNotFoundException(entity=User, entity_id=user_data.id)
             log.error("Failed to update user: %s", e)
-            raise GRPCClientException(f"Failed to update user {user_id}") from e
-        return user_data
+            raise GRPCClientException(f"Failed to update user {user_data.id}") from e
+        return convert_grpc_user_to_user(updated_user_data.user)
 
     async def delete_user(self, *, user_id: UUID) -> None:
         try:
@@ -97,4 +107,19 @@ class GRPCClient:
                 return None
             log.error("Failed to fetch user by email: %s", e)
             raise GRPCClientException(f"Failed to fetch user by email {email}") from e
-        return user_data
+        return convert_grpc_user_to_user(user_data.user)
+
+
+def convert_grpc_user_to_user(user: user_pb2.User) -> User:  # type: ignore
+    return User(
+        id=UUID(user.id),
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        created_at=grpc_timestamp_to_datetime(user.created_at),
+        updated_at=grpc_timestamp_to_datetime(user.updated_at),
+    )
+
+
+def grpc_timestamp_to_datetime(timestamp: Any) -> datetime:
+    return timestamp.ToDatetime().replace(tzinfo=UTC)

@@ -26,19 +26,10 @@ class UserRepository(IUserRepository):
         return await self.__grpc_client.fetch_user_by_email(email=email)
 
     async def create_user(self, user_data: CreateUser) -> User:
-        return await self.__grpc_client.create_user(
-            email=user_data.email,
-            first_name=user_data.first_name,
-            last_name=user_data.last_name,
-        )
+        return await self.__grpc_client.create_user(user_data=user_data)
 
     async def update_user(self, user_data: UpdateUser) -> User:
-        return await self.__grpc_client.update_user(
-            user_id=user_data.id,
-            email=user_data.email,
-            first_name=user_data.first_name,
-            last_name=user_data.last_name,
-        )
+        return await self.__grpc_client.update_user(user_data=user_data)
 
     async def delete_user(self, user_id: UserId) -> None:
         await self.__grpc_client.delete_user(user_id=user_id)

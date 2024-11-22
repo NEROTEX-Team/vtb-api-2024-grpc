@@ -10,3 +10,8 @@ class ClientException(Exception):
 class EntityNotFoundException(ClientException):
     def __init__(self, entity: type, entity_id: Any) -> None:
         super().__init__(f"{entity.__name__} with id {entity_id} not found")
+
+
+class EntityAlreadyExistsException(ClientException):
+    def __init__(self, entity: type, unique_id: Any) -> None:
+        super().__init__(f"{entity.__name__} with unique id {unique_id} already exists")

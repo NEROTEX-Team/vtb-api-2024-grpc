@@ -26,6 +26,7 @@ func (s *service) CreateUser(ctx context.Context, userData *model.CreateUser) (*
 		log.Printf("failed to create user: %s", err.Error())
 		return nil, err
 	}
+	log.Printf("user created: %s", user.ID)
 
 	return user, nil
 }
