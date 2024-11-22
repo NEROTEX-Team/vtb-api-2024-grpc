@@ -17,6 +17,7 @@ func (s *service) FetchUserById(ctx context.Context, userID string) (*model.User
 		log.Printf("user not found: %s", userID)
 		return nil, model.ErrorUserNotFound
 	}
+	log.Printf("user found: %s", user.ID)
 
 	return user, nil
 }

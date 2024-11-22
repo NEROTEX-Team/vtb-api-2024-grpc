@@ -27,6 +27,7 @@ func InitializeSchema(t *testing.T, pool *pgxpool.Pool) {
 	_, err := pool.Exec(context.Background(), `
 		CREATE TABLE IF NOT EXISTS users (
 			id UUID PRIMARY KEY,
+			hashed_password VARCHAR(255) NOT NULL,
 			first_name VARCHAR(255) NOT NULL,
 			last_name VARCHAR(255) NOT NULL,
 			email VARCHAR(255) NOT NULL UNIQUE,
@@ -37,6 +38,17 @@ func InitializeSchema(t *testing.T, pool *pgxpool.Pool) {
 	`)
 	if err != nil {
 		t.Fatalf("failed to initialize schema: %vn", err)
+	}
+}
+
+func CreateUsetInDB(t *testing.T, pool *pgxpool.Pool, userData *model.CreateUserWithID) {
+	t.Helper()
+	_, err := pool.Exec(context.Background(), `
+		INSERT INTO users (id, email, hashed_password, first_name, last_name)
+		VALUES ($1, $2, $3, $4, $5)
+	`, userData.ID, userData.Email, userData.Password, userData.FirstName, userData.LastName)
+	if err != nil {
+		t.Fatalf("failed to create user: %vn", err)
 	}
 }
 
@@ -110,4 +122,35 @@ func TestFetchUserByID_UserNotFound(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
+}
+
+func TestFetchUserByID_OK(t *testing.T) {
+	pool := SetupTestDB(t)
+	InitializeSchema(t, pool)
+	defer TeardownTestDB(t, pool)
+
+	ctx := context.Background()
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("failed to begin transaction: %vn", err)
+	}
+	defer tx.Rollback(ctx)
+
+	CreateUsetInDB(t, pool, &model.CreateUserWithID{
+		ID:        "12345678-1234-1234-1234-123456789012",
+		FirstName: "John",
+		LastName:  "Doe",
+		Email:     "oWw9S@example.com",
+	})
+
+	repo := NewRepository(pool)
+
+	user, err := repo.FetchUserById(ctx, "12345678-1234-1234-1234-123456789012")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if user.ID != "12345678-1234-1234-1234-123456789012" {
+		t.Fatalf("unexpected user ID: %s", user.ID)
+	}
 }

@@ -14,16 +14,18 @@ type User struct {
 }
 
 type CreateUser struct {
+	Email     string
+	Password  string
 	FirstName string
 	LastName  string
-	Email     string
 }
 
 type CreateUserWithID struct {
 	ID        string
+	Email     string
+	Password  string
 	FirstName string
 	LastName  string
-	Email     string
 }
 
 type UserListParams struct {
