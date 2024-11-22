@@ -37,7 +37,7 @@
 │   ├── config           # provides configuration of app
 │   ├── converter        # provides converters between different models
 │   ├── model            # data transfer objects (entities)
-│   ├── repository       # implementation of business logic 
+│   ├── repository       # implementation of business logic
 │   └── service          # business logic of this application
 ├── Makefile             # scripts for developers
 ├── pkg                  # generated with proto go-files

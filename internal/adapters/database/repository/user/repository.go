@@ -34,8 +34,8 @@ func (r *repository) CreateUser(ctx context.Context, userData *model.CreateUserW
 	defer r.m.Unlock()
 	var user repoModel.User
 	err := r.pool.QueryRow(ctx, `
-		INSERT INTO users (id, first_name, last_name, email) 
-		VALUES ($1, $2, $3, $4) 
+		INSERT INTO users (id, first_name, last_name, email)
+		VALUES ($1, $2, $3, $4)
 		RETURNING created_at, updated_at
 	`, userData.ID, userData.FirstName, userData.LastName, userData.Email).Scan(
 		&user.CreatedAt,
@@ -60,14 +60,14 @@ func (r *repository) FetchUserById(ctx context.Context, userID string) (*model.U
 	var user repoModel.User
 
 	err := r.pool.QueryRow(ctx, `
-		SELECT 
-			id, 
-			first_name, 
-			last_name, 
-			email, 
-			created_at, 
+		SELECT
+			id,
+			first_name,
+			last_name,
+			email,
+			created_at,
 			updated_at F
-		FROM users 
+		FROM users
 		WHERE id = $1
 	`, userID).Scan(
 		&user.ID,
@@ -90,17 +90,17 @@ func (r *repository) FetchUserList(ctx context.Context, params *model.UserListPa
 	defer r.m.RUnlock()
 
 	rows, err := r.pool.Query(ctx, `
-		SELECT 
+		SELECT
 			id,
 			first_name,
 			last_name,
 			email,
 			created_at,
 			updated_at
-		FROM users 
-		WHERE deleted_at IS NULL 
+		FROM users
+		WHERE deleted_at IS NULL
 		ORDER BY created_at
-		LIMIT $1 
+		LIMIT $1
 		OFFSET $2
 	`, params.Limit, params.Offset)
 	if err != nil {
@@ -143,8 +143,8 @@ func (r *repository) CountUsers(ctx context.Context, _ *model.UserListParams) (i
 	defer r.m.RUnlock()
 	var count int64
 	err := r.pool.QueryRow(ctx, `
-		SELECT COUNT(*) 
-		FROM users 
+		SELECT COUNT(*)
+		FROM users
 		WHERE deleted_at IS NULL
 	`).Scan(&count)
 	return count, err
@@ -156,7 +156,7 @@ func (r *repository) UpdateUserById(_ context.Context, userData *model.UpdateUse
 
 	var user repoModel.User
 	err := r.pool.QueryRow(context.Background(), `
-		UPDATE users 
+		UPDATE users
 		SET first_name = $2, last_name = $3, email = $4
 		WHERE id = $1
 		RETURNING id, first_name, last_name, email, created_at, updated_at
@@ -180,8 +180,8 @@ func (r *repository) DeleteUserById(ctx context.Context, userID string) error {
 	defer r.m.Unlock()
 
 	_, err := r.pool.Exec(ctx, `
-		UPDATE users 
-		SET deleted_at = TIMEZONE('utc', now()) 
+		UPDATE users
+		SET deleted_at = TIMEZONE('utc', now())
 		WHERE id = $1
 	`, userID)
 	return err
@@ -194,13 +194,13 @@ func (r *repository) FetchUserByEmail(ctx context.Context, email string) (*model
 	var user repoModel.User
 
 	err := r.pool.QueryRow(ctx, `
-		SELECT 
+		SELECT
 			id,
 			first_name,
 			last_name,
 			email,
 			created_at,
-			updated_at 
+			updated_at
 		FROM users
 		WHERE  = $1
 	`, email).Scan(
