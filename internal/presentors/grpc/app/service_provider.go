@@ -34,6 +34,8 @@ type serviceProvider struct {
 	antivirusConf antivirus.AntivirusConfig
 
 	antivirusScanner *antivirus.Scanner
+
+	keycloakClient *keycloak.KeycloakClient
 }
 
 func newServiceProvider() *serviceProvider {
@@ -63,7 +65,7 @@ func (s *serviceProvider) UserRepository() repository.UserRepository {
 
 func (s *serviceProvider) UserService() service.UserService {
 	if s.userService == nil {
-		s.userService = userService.NewService(s.UserRepository())
+		s.userService = userService.NewService(s.UserRepository(), s.KeycloakClient())
 	}
 	return s.userService
 }
@@ -141,10 +143,13 @@ func (s *serviceProvider) AntivirusScanner() *antivirus.Scanner {
 	return s.antivirusScanner
 }
 
-func (s *serviceProvider) KeycloakConfig() *keycloak.KeycloakConfig {
-	cfg, err := keycloak.LoadKeycloakConfig()
-	if err != nil {
-		log.Fatalf("failed to load keycloak config: %s", err.Error())
-	}
-	return cfg
+func (s *serviceProvider) KeycloakClient() *keycloak.KeycloakClient {
+    if s.keycloakClient == nil {
+        kc, err := keycloak.NewKeycloakClient()
+        if err != nil {
+            log.Fatalf("failed to initialize keycloak client: %s", err.Error())
+        }
+        s.keycloakClient = kc
+    }
+    return s.keycloakClient
 }
