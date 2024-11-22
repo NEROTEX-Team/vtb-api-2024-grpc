@@ -17,7 +17,7 @@ func (s *service) CreateUser(ctx context.Context, userData *model.CreateUser) (*
 		Email:     userData.Email,
 		FirstName: userData.FirstName,
 		LastName:  userData.LastName,
-		Password:  userID.String(),
+		Password:  userData.Password,
 	}
 
     err := s.keycloakClient.CreateUser(ctx, kcUserData)
