@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/coreos/go-oidc"
+	"github.com/coreos/go-oidc/v3/oidc"
 )
 
 type KeycloakClient struct {
