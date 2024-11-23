@@ -25,3 +25,8 @@ go.work.sum
 .env
 
 *.bin
+
+.venv
+
+.vscode
+.idea

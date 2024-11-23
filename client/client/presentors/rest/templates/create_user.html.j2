@@ -1,0 +1,44 @@
+{% extends 'base.html.j2' %}
+
+{% block content %}
+<div class="section">
+  <div class="row">
+    <h2>Создать нового пользователя</h2>
+  </div>
+  <div class="row">
+    <div class="col">
+      <a class="waves-effect waves-light btn-small" href="{{ url_for('users:list') }}">
+        <i class="material-icons left">arrow_back</i>Назад к списку пользователей
+      </a>
+    </div>
+  </div>
+    <form method="post" class="col s6">
+        <div class="row">
+            <div class="input-field col s6">
+                <input placeholder="Введите e-mail" id="email" type="email" class="validate" name="email">
+                <label for="email">E-mail</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input placeholder="Введите пароль" id="password" type="password" class="validate" name="password">
+                <label for="password">Password</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input placeholder="Введите имя" id="first_name" type="text" class="validate" name="first_name">
+                <label for="first_name">First Name</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input placeholder="Введите фамилию" id="last_name" type="text" class="validate" name="last_name">
+                <label for="last_name">Last Name</label>
+            </div>
+        </div>
+        <button class="btn waves-effect waves-light" type="submit">Создать пользователя</button>
+    </form>
+</div>
+
+{% endblock %}

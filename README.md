@@ -10,7 +10,6 @@
   - [Project Structure](#project-structure)
   - [Testing](#testing)
   - [Docker Image](#docker-image)
-  - [Implementation](#implementation)
 
 ## Architecture
 
@@ -31,14 +30,18 @@
 │   └── grpc_server      # starting point of the project
 ├── go.mod
 ├── go.sum
-├── internal             # main folder of project
-│   ├── api
-│   ├── app              # provides server app
-│   ├── config           # provides configuration of app
-│   ├── converter        # provides converters between different models
-│   ├── model            # data transfer objects (entities)
-│   ├── repository       # implementation of business logic 
-│   └── service          # business logic of this application
+├── internal
+│   ├── adapters          # adapter layer
+│   │   ├── antivirus     # antivirus implementation
+│   │   ├── database      # database implementation
+│   │   └── keycloak      # keycloak implementation
+│   ├── converter         # provides converters between different models
+│   ├── domain            # business logic layer
+│   │   ├── entities      # data transfer objects (models)
+│   │   ├── repositories  # interfaces of repositories
+│   │   └── services      # main independent business logic without any implementations
+│   └── presentors        # presentor layer
+│       └── grpc
 ├── Makefile             # scripts for developers
 ├── pkg                  # generated with proto go-files
 │   └── v1
@@ -51,17 +54,17 @@
 Before start autotests, you should run `make local`. This command starts
 clear database container for autotesting.
 
-Start autotests with command: `
+Start autotests with command: `make test`.
 
 After autotests you can use `make local-down` to stop container.
 
 ## Docker Image
 
-You can download Docker Image from [Docker Hub](https://hub.docker.com/r/andytakker/vtb-api-2024-grpc).
+You can download Docker Image of [GRPC server](https://hub.docker.com/r/andytakker/vtb-api-2024-grpc-server)
+and [GRPC client](https://hub.docker.com/r/andytakker/vtb-api-2024-grpc-client)
+from Docker Hub.
 
 To build new image locally use `make docker-build`.
 
 A new image is built every time a new commit gets into master via
 [Github Actions](https://github.com/NEROTEX-Team/vtb-api-2024-grpc/blob/master/.github/workflows/ci.yaml).
-
-## Implementation

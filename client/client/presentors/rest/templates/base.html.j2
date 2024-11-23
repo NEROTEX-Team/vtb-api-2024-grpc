@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <!-- Мета-теги -->
+  <meta charset="UTF-8">
+  <title>{% block title %}User Management System{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', path='./imgs/favicon.png')}}">
+
+  <!-- Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+
+  <!-- Собственные стили -->
+  {# <link href="{{ url_for('static', path='./css/style.css') }}" rel="stylesheet"> #}
+
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <!-- Навигационная панель -->
+  <nav class="blue-grey darken-3">
+    <div class="nav-wrapper container">
+      <a href="" class="brand-logo">GRPC Client</a>
+      <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="{{ url_for('users:list') }}">Список пользователей</a></li>
+        <li><a href="{{ url_for('users:create') }}">Создать пользователя</a></li>
+      </ul>
+    </div>
+  </nav>
+
+    <!-- Мобильное меню -->
+    <ul class="sidenav" id="mobile-nav">
+        <li><a href="{{ url_for('users:list') }}">Список пользователей</a></li>
+        <li><a href="{{ url_for('users:create') }}">Создать пользователя</a></li>
+    </ul>
+
+    <!-- Основной контент -->
+    <main>
+        {% if errors %}
+        <div class="card red darken-1">
+            <div class="card-content white-text">
+                <span class="card-title">Errors</span>
+                <ul class="collection">
+                {% for error in errors %}
+                    <li class="collection-item">{{ error }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        <div class="container">
+            {% block content %}
+            <!-- Содержимое страницы -->
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Футер -->
+    <footer class="page-footer blue-grey darken-3">
+        <div class="container">
+            © {{ current_year }} User Management System
+            <a class="grey-text text-lighten-4 right" href="#!">Дополнительные ссылки</a>
+        </div>
+    </footer>
+
+    <!-- jQuery и Materialize JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Иконки Material Design -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- Скрипт инициализации -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация мобильного меню
+            var sidenav = document.querySelectorAll('.sidenav');
+            M.Sidenav.init(sidenav);
+
+            // Инициализация выпадающих меню (если используются)
+            var dropdowns = document.querySelectorAll('.dropdown-trigger');
+            M.Dropdown.init(dropdowns);
+
+            // Инициализация слайдеров, модальных окон и других компонентов при необходимости
+            // Пример:
+            // var modals = document.querySelectorAll('.modal');
+            // M.Modal.init(modals);
+        });
+    </script>
+
+    <!-- Собственные скрипты -->
+    {# <script src="{{ url_for('static', path='js/script.js') }}"></script> #}
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

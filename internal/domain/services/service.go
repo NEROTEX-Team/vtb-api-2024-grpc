@@ -10,4 +10,6 @@ type UserService interface {
 	CreateUser(ctx context.Context, userData *model.CreateUser) (*model.User, error)
 	FetchUserById(ctx context.Context, userID string) (*model.User, error)
 	FetchUserList(ctx context.Context, params *model.UserListParams) (*model.UserList, error)
+	UpdateUserById(ctx context.Context, userData *model.UpdateUser) (*model.User, error)
+	DeleteUserById(ctx context.Context, userID string) error
 }

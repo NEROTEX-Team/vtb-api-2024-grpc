@@ -12,6 +12,7 @@ func ToCreateUserFromDesc(user *desc.CreateUserRequest) *model.CreateUser {
 		Email:     user.Email,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
+		Password:  user.Password,
 	}
 }
 
@@ -28,5 +29,22 @@ func ToUserFromService(user *model.User) *desc.User {
 		LastName:  user.LastName,
 		CreatedAt: timestamppb.New(user.CreatedAt),
 		UpdatedAt: updatedAt,
+	}
+}
+
+func ToUsersFromService(users *[]model.User) []*desc.User {
+	var result []*desc.User
+	for _, user := range *users {
+		result = append(result, ToUserFromService(&user))
+	}
+	return result
+}
+
+func ToUpdateUserFromDesc(user *desc.UpdateUserRequest) *model.UpdateUser {
+	return &model.UpdateUser{
+		ID:        user.Id,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
 	}
 }

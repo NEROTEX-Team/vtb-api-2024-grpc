@@ -1,0 +1,62 @@
+{% extends 'base.html.j2' %}
+
+{% block content %}
+<div class="section">
+  <div class="row">
+    <h1>Информация о пользователе</h1>
+  </div>
+  <div class="row">
+    <div class="col">
+    <a class="waves-effect waves-light btn-small" href="{{ url_for('users:list') }}">
+      <i class="material-icons left">arrow_back</i>Назад к списку пользователей
+    </a>
+    </div>
+  </div>
+  <div class="row">
+    <table class="highlight">
+      <thead>
+        <tr>
+          <th>Поле</th>
+          <th>Значение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>ID</b></td>
+          <td>{{ user.id}}</td>
+        </tr>
+        <tr>
+          <td><b>E-mail</b></td>
+          <td>{{ user.email}}</td>
+        </tr>
+        <tr>
+          <td><b>First Name</b></td>
+          <td>{{ user.first_name}}</td>
+        </tr>
+        <tr>
+          <td><b>Last Name</b></td>
+          <td>{{ user.last_name}}</td>
+        </tr>
+        <tr>
+          <td><b>Created At:</b></td>
+          <td>{{ user.created_at}}</td>
+        </tr>
+        <tr>
+          <td><b>Updated At:</b></td>
+          <td>{{ user.updated_at}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row">
+    <div class="col">
+      <a class="waves-effect waves-light btn-small" href="{{ url_for('users:update', user_id=user.id) }}">
+        <i class="material-icons left">edit</i>Обновить пользователя
+      </a>
+    </div>
+  </div>
+</div>
+
+<br>
+
+{% endblock %}

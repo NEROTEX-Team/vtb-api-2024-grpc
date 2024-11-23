@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
+	interceptors "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/presentors/grpc/interceptors"
 	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
 )
 
@@ -64,7 +65,7 @@ func (a *App) initGRPCServer(_ context.Context) error {
 		grpcServeroptions = append(
 			grpcServeroptions,
 			grpc.UnaryInterceptor(
-				a.serviceProvider.antivirusScanner.UnaryServerInterceptor("photo"),
+				interceptors.AntivirusInterceptor(a.serviceProvider.antivirusScanner, "photo"),
 			),
 		)
 	}

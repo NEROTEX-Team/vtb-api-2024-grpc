@@ -27,3 +27,8 @@ api/
 
 .DS_Store
 Thumbs.db
+.venv
+.mypy_cache
+.ruff_cache
+.github
+.vscode

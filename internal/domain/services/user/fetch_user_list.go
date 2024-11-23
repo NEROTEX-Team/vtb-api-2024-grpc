@@ -16,6 +16,13 @@ func (s *service) FetchUserList(ctx context.Context, params *model.UserListParam
 
 	count, err := s.userRepository.CountUsers(ctx, params)
 
+	if err != nil {
+		log.Printf("failed to count users: %s", err.Error())
+		return nil, err
+	}
+
+	log.Printf("user list found: %d", count)
+
 	return &model.UserList{
 		Items: *users,
 		Total: count,

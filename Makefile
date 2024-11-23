@@ -9,7 +9,8 @@ build-local:
 	go build -o server.bin cmd/grpc_server/main.go
 
 build-docker:
-	docker build . -t vtb-api-2024-grpc
+	docker build . -t vtb-api-2024-grpc-server
+	cd client && docker build . -t vtb-api-2024-grpc-client
 
 test:
 	go test -v ./...
