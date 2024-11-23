@@ -20,3 +20,6 @@ local:
 
 local-down:
 	docker compose -f docker-compose.dev.yaml down -v
+
+cert:
+	cd ./certs; bash gen-cert.sh; cd ..

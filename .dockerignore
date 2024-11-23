@@ -32,3 +32,4 @@ Thumbs.db
 .ruff_cache
 .github
 .vscode
+*.pem
