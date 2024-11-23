@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -11,6 +12,11 @@ import (
 
 	interceptors "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/presentors/grpc/interceptors"
 	desc "github.com/NEROTEX-Team/vtb-api-2024-grpc/pkg/v1/user"
+
+	"github.com/getsentry/sentry-go"
+
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_sentry "github.com/johnbellone/grpc-middleware-sentry"
 )
 
 type App struct {
@@ -76,6 +82,27 @@ func (a *App) initGRPCServer(_ context.Context) error {
 			grpc.UnaryInterceptor(
 				interceptors.NewAuthInterceptor(a.serviceProvider.KeycloakClient()).Unary(),
 			),
+		)
+	}
+
+	if a.serviceProvider.SentryConfig().UseSentry() {
+		log.Print("Sentry enabled")
+		err := sentry.Init(sentry.ClientOptions{
+			Dsn:          a.serviceProvider.SentryConfig().DSN(),
+			Debug:        a.serviceProvider.SentryConfig().Environment() != "production",
+			Environment:  a.serviceProvider.SentryConfig().Environment(),
+			Release:      "vtb-api-hack-server@1.0.0",
+			IgnoreErrors: []string{},
+		})
+		defer sentry.Flush(2 * time.Second)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		grpcServeroptions = append(
+			grpcServeroptions,
+			grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+				grpc_sentry.UnaryServerInterceptor(),
+			)),
 		)
 	}
 
