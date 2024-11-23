@@ -8,6 +8,7 @@ import (
 	database "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database"
 	userRepository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database/repository/user"
 	keycloak "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/keycloak"
+	"github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/sentry"
 	repository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/repositories"
 	service "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/services"
 	userService "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/services/user"
@@ -33,6 +34,8 @@ type serviceProvider struct {
 
 	keycloakConf   keycloak.KeycloakConfig
 	keycloakClient *keycloak.KeycloakClient
+
+	sentryConfig sentry.SentryConfig
 }
 
 func newServiceProvider() *serviceProvider {
@@ -160,4 +163,16 @@ func (s *serviceProvider) KeycloakClient() *keycloak.KeycloakClient {
 		s.keycloakClient = kc
 	}
 	return s.keycloakClient
+}
+
+func (s *serviceProvider) SentryConfig() sentry.SentryConfig {
+	if s.sentryConfig == nil {
+		sentryConfig, err := sentry.LoadSentryConfig()
+		if err != nil {
+			log.Fatalf("failed to load sentry config: %s", err.Error())
+		}
+		s.sentryConfig = sentryConfig
+	}
+
+	return s.sentryConfig
 }
