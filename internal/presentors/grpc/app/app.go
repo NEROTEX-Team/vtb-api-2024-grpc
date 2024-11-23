@@ -70,6 +70,15 @@ func (a *App) initGRPCServer(_ context.Context) error {
 		)
 	}
 
+	if a.serviceProvider.KeycloakConfig().UseKeycloak() {
+		grpcServeroptions = append(
+			grpcServeroptions,
+			grpc.UnaryInterceptor(
+				interceptors.NewAuthInterceptor(a.serviceProvider.KeycloakClient()).Unary(),
+			),
+		)
+	}
+
 	a.grpcServer = grpc.NewServer(grpcServeroptions...)
 
 	reflection.Register(a.grpcServer)

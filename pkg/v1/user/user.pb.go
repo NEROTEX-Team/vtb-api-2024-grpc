@@ -7,9 +7,9 @@
 package user
 
 import (
-	timestamp "google.golang.org/protobuf/types/known/timestamppb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamp "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 )
