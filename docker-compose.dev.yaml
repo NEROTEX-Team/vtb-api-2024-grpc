@@ -1,4 +1,29 @@
 services:
+  keycloak-db:
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=testkcuser
+      - POSTGRES_PASSWORD=testkcpass
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.6
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB_URL_HOST=keycloak-db
+      - KC_DB_USERNAME=testkcuser
+      - KC_DB_PASSWORD=testkcpass
+    command: >
+      start-dev --http-relative-path=/keycloak --hostname-strict=false
+    depends_on:
+      - keycloak-db
+
   db:
     image: postgres:16
     environment:

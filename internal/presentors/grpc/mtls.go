@@ -10,12 +10,17 @@ import (
 )
 
 const (
-	tlsCertFileEnvName = "APP_TLS_CERT_FILE_PATH"
-	tlsKeyFileEnvName  = "APP_TLS_KEY_FILE_PATH"
-	tlsCAFileEnvName   = "APP_TLS_CA_FILE_PATH"
+	useTLS             = "APP_TLS_USE"
+	tlsCAFileEnvName   = "APP_TLS_SERVER_CA_FILE_PATH"
+	tlsCertFileEnvName = "APP_TLS_SERVER_CERT_FILE_PATH"
+	tlsKeyFileEnvName  = "APP_TLS_SERVER_KEY_FILE_PATH"
 )
 
 func LoadTLSCredentials() (credentials.TransportCredentials, error) {
+	useTLS := os.Getenv(useTLS)
+	if useTLS != "true" {
+		return nil, errors.New("tls not enabled")
+	}
 	tlsCertFile := os.Getenv(tlsCertFileEnvName)
 	if len(tlsCertFile) == 0 {
 		return nil, errors.New("tls cert file not found")

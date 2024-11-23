@@ -1,20 +1,55 @@
 services:
-  db:
+  keycloak-db:
     image: postgres:16
     restart: on-failure:5
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${KC_POSTGRES_PORT?}:5432"
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${KC_POSTGRES_USER?}
+      - POSTGRES_PASSWORD=${KC_POSTGRES_PASSWORD?}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${KC_POSTGRES_USER} -d postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - keycloak_postgres_data:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.6
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      - KEYCLOAK_ADMIN=${KC_ADMIN_USER?}
+      - KEYCLOAK_ADMIN_PASSWORD=${KC_ADMIN_PASSWORD?}
+      - KC_DB_URL_HOST=keycloak-db
+      - KC_DB_USERNAME=${KC_POSTGRES_USER?}
+      - KC_DB_PASSWORD=${KC_POSTGRES_PASSWORD?}
+    command: >
+      start-dev --http-relative-path=k/keycloak --hostname-strict=false
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+
+  db:
+    image: postgres:16
+    restart: on-failure:5
+    ports:
+      - "${APP_POSTGRES_PORT?}:5432"
+    environment:
+      - POSTGRES_USER=${APP_POSTGRES_USER?}
+      - POSTGRES_PASSWORD=${APP_POSTGRES_PASSWORD?}
+      - POSTGRES_DB=${APP_POSTGRES_DB?}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${APP_POSTGRES_USER?} -d ${APP_POSTGRES_DB?}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - app_postgres_data:/var/lib/postgresql/data
 
   grpc_server:
     image: andytakker/vtb-api-2024-grpc-server:latest
@@ -27,11 +62,22 @@ services:
     environment:
       - APP_GRPC_HOST=0.0.0.0
       - APP_GRPC_PORT=$APP_GRPC_PORT
-      - APP_TLS_CERT_FILE_PATH=$APP_TLS_CERT_FILE_PATH
-      - APP_TLS_KEY_FILE_PATH=$APP_TLS_KEY_FILE_PATH
-      - APP_TLS_CA_FILE_PATH=$APP_TLS_CA_FILE_PATH
-      - APP_DATABASE_DSN=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
 
+      - APP_TLS_USE=$APP_TLS_USE
+      - APP_TLS_SERVER_CA_FILE_PATH=$APP_TLS_SERVER_CA_FILE_PATH
+      - APP_TLS_SERVER_CERT_FILE_PATH=$APP_TLS_SERVER_CERT_FILE_PATH
+      - APP_TLS_SERVER_KEY_FILE_PATH=$APP_TLS_SERVER_KEY_FILE_PATH
+
+      - APP_DATABASE_DSN=postgres://${APP_POSTGRES_USER?}:${APP_POSTGRES_PASSWORD?}@db:5432/${APP_POSTGRES_DB?}?sslmode=disable
+
+      - APP_KEYCLOAK_ENABLE=${APP_KEYCLOAK_ENABLE?}
+      - APP_KEYCLOAK_BASE_URL=${APP_KEYCLOAK_BASE_URL?}
+      - APP_KEYCLOAK_REALM=${APP_KEYCLOAK_REALM?}
+      - APP_KEYCLOAK_CLIENT_ID=${APP_KEYCLOAK_CLIENT_ID?}
+      - APP_KEYCLOAK_ADMIN_USERNAME=${APP_KEYCLOAK_ADMIN_USERNAME?}
+      - APP_KEYCLOAK_ADMIN_PASSWORD=${APP_KEYCLOAK_ADMIN_PASSWORD?}
+    volumes:
+      - ./certs:/certs:ro
   grpc_client:
     image: andytakker/vtb-api-2024-grpc-client:latest
     restart: on-failure:5
@@ -44,6 +90,12 @@ services:
     environment:
       - APP_GRPC_HOST=grpc_server
       - APP_GRPC_PORT=$APP_GRPC_PORT
-
+      - APP_TLS_USE=$APP_TLS_USE
+      - APP_TLS_CLIENT_CA_FILE_PATH=$APP_TLS_CLIENT_CA_FILE_PATH
+      - APP_TLS_CLIENT_CERT_FILE_PATH=$APP_TLS_CLIENT_CERT_FILE_PATH
+      - APP_TLS_CLIENT_KEY_FILE_PATH=$APP_TLS_CLIENT_KEY_FILE_PATH
+    volumes:
+      - ./certs:/certs:ro
 volumes:
-  postgres_data:
+  app_postgres_data:
+  keycloak_postgres_data:
