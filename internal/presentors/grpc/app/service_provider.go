@@ -5,9 +5,9 @@ import (
 	"log"
 
 	antivirus "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/antivirus"
-	keycloak "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/keycloak"
 	database "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database"
 	userRepository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/database/repository/user"
+	keycloak "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/adapters/keycloak"
 	repository "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/repositories"
 	service "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/services"
 	userService "github.com/NEROTEX-Team/vtb-api-2024-grpc/internal/domain/services/user"
@@ -22,19 +22,16 @@ type serviceProvider struct {
 	tlsCredentials credentials.TransportCredentials
 
 	DBCreds string
-
-	pool *pgxpool.Pool
+	pool    *pgxpool.Pool
 
 	userRepository repository.UserRepository
+	userService    service.UserService
+	userImpl       *user.Implementation
 
-	userService service.UserService
-
-	userImpl *user.Implementation
-
-	antivirusConf antivirus.AntivirusConfig
-
+	antivirusConf    antivirus.AntivirusConfig
 	antivirusScanner *antivirus.Scanner
 
+	keycloakConf   keycloak.KeycloakConfig
 	keycloakClient *keycloak.KeycloakClient
 }
 
@@ -143,13 +140,24 @@ func (s *serviceProvider) AntivirusScanner() *antivirus.Scanner {
 	return s.antivirusScanner
 }
 
+func (s *serviceProvider) KeycloakConfig() keycloak.KeycloakConfig {
+	if s.keycloakConf == nil {
+		kcc, err := keycloak.LoadKeycloakConfig()
+		if err != nil {
+			log.Fatalf("failed to load keycloak config: %s", err.Error())
+		}
+		s.keycloakConf = kcc
+	}
+	return s.keycloakConf
+}
+
 func (s *serviceProvider) KeycloakClient() *keycloak.KeycloakClient {
-    if s.keycloakClient == nil {
-        kc, err := keycloak.NewKeycloakClient()
-        if err != nil {
-            log.Fatalf("failed to initialize keycloak client: %s", err.Error())
-        }
-        s.keycloakClient = kc
-    }
-    return s.keycloakClient
+	if s.keycloakClient == nil {
+		kc, err := keycloak.NewKeycloakClient(s.KeycloakConfig())
+		if err != nil {
+			log.Fatalf("failed to initialize keycloak client: %s", err.Error())
+		}
+		s.keycloakClient = kc
+	}
+	return s.keycloakClient
 }

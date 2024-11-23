@@ -74,7 +74,7 @@ func (a *App) initGRPCServer(_ context.Context) error {
 		grpcServeroptions = append(
 			grpcServeroptions,
 			grpc.UnaryInterceptor(
-				interceptors.NewAuthInterceptor(a.serviceProvider.KeycloakConfig()).Unary(),
+				interceptors.NewAuthInterceptor(a.serviceProvider.KeycloakClient()).Unary(),
 			),
 		)
 	}
