@@ -30,7 +30,7 @@ services:
       - APP_TLS_CERT_FILE_PATH=$APP_TLS_CERT_FILE_PATH
       - APP_TLS_KEY_FILE_PATH=$APP_TLS_KEY_FILE_PATH
       - APP_TLS_CA_FILE_PATH=$APP_TLS_CA_FILE_PATH
-      - APP_DATABASE_DSN=$APP_DATABASE_DSN
+      - APP_DATABASE_DSN=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
 
   grpc_client:
     image: andytakker/vtb-api-2024-grpc-client:latest
