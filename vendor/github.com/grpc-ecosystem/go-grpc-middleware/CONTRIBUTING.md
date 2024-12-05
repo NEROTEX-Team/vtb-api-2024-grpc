@@ -6,7 +6,7 @@ Fork, then clone the repo:
 
 ```bash
 git clone git@github.com:your-username/go-grpc-middleware.git
-```
+```    
 
 Before checking in please run the following:
 
