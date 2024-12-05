@@ -13,7 +13,7 @@
 
 ## ⚠️  Status
 
-Version [v2](https://github.com/grpc-ecosystem/go-grpc-middleware/tree/v2) is about to be released, with migration guide, which will replace v1. Try v2 and give us feedback!
+Version [v2](https://github.com/grpc-ecosystem/go-grpc-middleware/tree/v2) is about to be released, with migration guide, which will replace v1. Try v2 and give us feedback! 
 
 Version v1 is currently in deprecation mode, which means only critical and safety bug fixes will be merged.
 
